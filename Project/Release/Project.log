@@ -1,0 +1,2 @@
+﻿  glad.c
+C:\Users\User\Desktop\Bridge_Game\Project\glad.c(25,10): fatal error C1083: 포함 파일을 열 수 없습니다. 'include/glad/glad.h': No such file or directory
