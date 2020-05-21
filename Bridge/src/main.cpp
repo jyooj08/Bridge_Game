@@ -13,6 +13,9 @@ using namespace std;
 bool zoom_tracking = false;
 bool padding = false;
 bool tb_tracking = false;
+vec3	tbx = vec3(1, 0, 0);
+vec3	tby = vec3(0, 1, 0);
+vec3	tbz = vec3(0, 0, 1);
 float zoom_y_past = 0.0f;
 dvec2 padding_past;
 
@@ -187,6 +190,9 @@ void mouse( GLFWwindow* window, int button, int action, int mods )
 		if (action == GLFW_PRESS) {
 			tb_tracking = true;
 			padding_past = pos;
+			tbx = (cam.at - cam.eye).normalize();
+			tby = cam.up.cross(tbx).normalize();
+			tbz = tby.cross(tbx).normalize();
 		}
 	}
 	// zoom
@@ -213,13 +219,20 @@ void motion( GLFWwindow* window, double x, double y )
 	float dy = float(y - padding_past.y);
 	if (tb_tracking) {
 		vec3 re = cam.eye - cam.at;
-		vec4 e = { re.x,re.y,re.z, 1 };
+		vec4 e = { re.x,re.y,re.z, 0 };
+		vec4 u = { cam.up.x, cam.up.y, cam.up.z, 0 };
 		float th = dy * 0.001f;
+		th = th - int(th / PI) * PI;
 		float pi = dx * 0.001f;
-		//e = mat4::rotate(cam.up.cross(re).cross(re).normalize(), pi) * e;
-		e = mat4::rotate(-cam.up.cross(re).normalize(), th) * e;
+		vec4 oe = e;
+		e = mat4::rotate(tby, th) * e;
+		u = mat4::rotate(tby, th) * u;
+		//e = mat4::rotate(tbx, pi) * e;
+		e = mat4::rotate(tby.cross(re).normalize(), -pi) * e;
+		//if (oe.x*e.x<0) cam.up *= -1;
 
 		cam.eye = cam.at + vec3(e.x, e.y, e.z);
+		cam.up = vec3(u.x, u.y, u.z);
 
 		padding_past = dvec2(x, y);
 	}

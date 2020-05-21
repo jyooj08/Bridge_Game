@@ -14,7 +14,8 @@ struct camera
 	vec3	up = vec3( 0, 0,1 );
 	mat4	view_matrix = mat4::look_at( eye, at, up );
 	void update() {
-			view_matrix = mat4::look_at( eye, at, up );
+		//ax = ()
+		view_matrix = mat4::look_at(eye, at, up);
 	}
 	float	fovy = PI/4.0f; // must be in radian
 	float	aspect=1.0f;
