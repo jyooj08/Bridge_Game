@@ -54,19 +54,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="animator.cpp" />
     <ClCompile Include="BridgeMap.cpp" />
     <ClCompile Include="glBufferManager.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="gl\glad\glad.c" />
+    <ClCompile Include="god.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="render.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="animator.h" />
     <ClInclude Include="BridgeMap.h" />
+    <ClInclude Include="camera.h" />
     <ClInclude Include="cgmath.h" />
     <ClInclude Include="cgut.h" />
     <ClInclude Include="glBufferManager.h" />
     <ClInclude Include="global.h" />
+    <ClInclude Include="god.h" />
+    <ClInclude Include="meshFactory.h" />
+    <ClInclude Include="myMesh.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="trackball.h" />
   </ItemGroup>

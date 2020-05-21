@@ -1,4 +1,5 @@
 #include "glBufferManager.h"
+#include <set>
 #include <iostream>
 
 //*************************************
@@ -80,5 +81,31 @@ void drawIndexChunk(glChunk* chunk, GLint baseVertex) {
 GLint applyModelMatrix(mat4 model_matrix) {
 	GLint uloc = glGetUniformLocation(program, "model_matrix");
 	if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, model_matrix);
+	return uloc;
+}
+
+GLint applyCamera(camera arg_cam) { // auto aspect
+	arg_cam.aspect = window_size.x / float(window_size.y);
+	arg_cam.update();
+	GLint uloc;
+	uloc = glGetUniformLocation(program, "view_matrix");
+	if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, arg_cam.view_matrix);
+	uloc = glGetUniformLocation(program, "projection_matrix");
+	if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, arg_cam.projection_matrix);
+	return uloc;
+}
+
+GLint setUniformVariable(std::string var_name, uint value) {
+	GLint uloc;
+	uloc = glGetUniformLocation(program, var_name.c_str());
+	if (uloc > -1) glUniform1ui(uloc, value);
+	else {
+		// one time warning
+		static set<string> err_var_name_set;
+		if (err_var_name_set.find(var_name) == err_var_name_set.end()) {
+			cout << "WARNING : GLSL uniform var '" << var_name << "' does not exist!" << endl;
+			err_var_name_set.insert(var_name);
+		}
+	}
 	return uloc;
 }

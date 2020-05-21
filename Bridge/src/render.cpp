@@ -29,13 +29,15 @@ renderID attachRenderFunction(render_function_t render_function) {
 	_renderSet.insert(make_pair(newRenderID,render_function));
 	return newRenderID;
 }
-void detachRenderFunction(renderID renderID) {
+void detachRenderFunction(renderID& renderID) {
+	if (renderID == 0) return;
 	if (_renderSet.erase(renderID)>=1) {
 		renderIDBasket.push(renderID);
 	}
 	else {
 		//cout << "WARNING : Non-existing renderID!" << endl;
 	}
+	renderID = 0;
 }
 
 

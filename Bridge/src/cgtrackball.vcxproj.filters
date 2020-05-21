@@ -5,55 +5,97 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Shader Files">
+      <UniqueIdentifier>{f622381c-0169-4c9f-ba03-ca2c876f9248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameObjects">
+      <UniqueIdentifier>{861b4ec6-9720-41e9-8e78-1337a03de389}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Executor">
+      <UniqueIdentifier>{eed2c9ee-fc19-413a-ae05-1bc57230a107}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tools">
+      <UniqueIdentifier>{f3c9d668-57c1-4b34-9987-ac260fda85ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Libraries">
+      <UniqueIdentifier>{9ae89826-a3b6-44af-a0e2-80d5fe3b012d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Shader Files">
-      <UniqueIdentifier>{f622381c-0169-4c9f-ba03-ca2c876f9248}</UniqueIdentifier>
+    <Filter Include="Header Files\GameObjects">
+      <UniqueIdentifier>{1ae15401-021a-4fa0-a53e-cb1540c0d366}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Executor">
+      <UniqueIdentifier>{ea72344f-a8f1-4a29-9252-05fcedad9266}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tools">
+      <UniqueIdentifier>{f126d17c-cda1-479b-bfd5-f2fdc33dc3ea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gl\glad\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="global.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="render.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BridgeMap.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="render.cpp">
+      <Filter>Source Files\Executor</Filter>
+    </ClCompile>
+    <ClCompile Include="animator.cpp">
+      <Filter>Source Files\Executor</Filter>
     </ClCompile>
     <ClCompile Include="glBufferManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="gl\glad\glad.c">
+      <Filter>External Libraries</Filter>
+    </ClCompile>
+    <ClCompile Include="god.cpp">
+      <Filter>Source Files\Executor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="trackball.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cgmath.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="cgut.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="global.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="BridgeMap.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="render.h">
+      <Filter>Header Files\Executor</Filter>
+    </ClInclude>
+    <ClInclude Include="animator.h">
+      <Filter>Header Files\Executor</Filter>
     </ClInclude>
     <ClInclude Include="glBufferManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="trackball.h">
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="cgut.h">
+      <Filter>External Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="cgmath.h">
+      <Filter>External Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="god.h">
+      <Filter>Header Files\Executor</Filter>
+    </ClInclude>
+    <ClInclude Include="meshFactory.h">
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="myMesh.h">
+      <Filter>Header Files\Tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
