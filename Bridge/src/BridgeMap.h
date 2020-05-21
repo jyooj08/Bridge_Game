@@ -13,10 +13,12 @@ public:
 	void loadPath();
 	void render();
 private:
-	glChunk* defaultVertexChunk = NULL;
-	glChunk* defaultIndexChunk = NULL;
-	vector<vertex> boxVertices;
-	vector<uint> boxIndices;
+	myMesh* tileMesh;
+	glChunk* tileVertexChunk = NULL;
+	glChunk* tileIndexChunk = NULL;
+	vector<vertex>	tileVertices;
+	vector<uint>	tileIndices;
+
 	vector<Tile> path;
 };
 

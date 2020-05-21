@@ -51,8 +51,8 @@ glChunk* newVertexChunk(GLsizeiptr size) {
 glChunk* newIndexChunk(GLsizeiptr size) {
 	glChunk* newChunk = new glChunk;
 	if (index_buffer_offset + size >= index_buffer_size) {
-		vertex_buffer_size *= 2;
-		if (vertex_buffer_size >= MAX_GL_BUFFER_SIZE) {
+		index_buffer_size *= 2;
+		if (index_buffer_size >= MAX_GL_BUFFER_SIZE) {
 			std::cout << "WARNING! : openGL buffer size is too large!!";
 		}
 		/* TODO reallocate index buffer*/
@@ -70,10 +70,15 @@ void deleteGLChunk(glChunk* chunk) {
 	
 }
 
-void drawIndexChunk(glChunk* chunk) {
+void drawIndexChunk(glChunk* chunk, GLint baseVertex) {
 	glDrawElementsBaseVertex(GL_TRIANGLES,
 		chunk->size/sizeof(uint),
 		GL_UNSIGNED_INT,
-		nullptr,
-		chunk->offset/sizeof(uint));
+		(void*)chunk->offset,
+		baseVertex);
+}
+GLint applyModelMatrix(mat4 model_matrix) {
+	GLint uloc = glGetUniformLocation(program, "model_matrix");
+	if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, model_matrix);
+	return uloc;
 }

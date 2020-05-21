@@ -1,6 +1,7 @@
 #include "global.h"
 #include "render.h"
 #include "glBufferManager.h"
+#include "BridgeMap.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -11,17 +12,20 @@ using namespace std;
 
 bool zoom_tracking = false;
 bool padding = false;
+bool tb_tracking = false;
 float zoom_y_past = 0.0f;
 dvec2 padding_past;
 
 //*************************************
 
-static const uint CIRCLE_N = 64;
-static const uint SPHERE_N = 32;
+static const uint CIRCLE_N = 50;
+static const uint SPHERE_N = 30;
 vector<vertex> sphere_vertices;
 vector<uint> sphere_indices;
 glChunk* vertex_chunk;
 glChunk* index_chunk;
+myMesh* sphereMesh;
+BridgeMap* bridgeMap;
 
 bool wire_mode = false;
 uint color_mode = 0;
@@ -48,7 +52,7 @@ void generate_sphere() {
 		}
 	}
 
-	for (uint h = 0; h <= SPHERE_N; h++) {
+	for (uint h = 0; h < SPHERE_N; h++) {
 		for (uint k = 0; k < CIRCLE_N; k++) {
 			int o = CIRCLE_N * h + k;
 			sphere_indices.push_back(o);
@@ -57,15 +61,20 @@ void generate_sphere() {
 			sphere_indices.push_back(o);
 			sphere_indices.push_back(o + CIRCLE_N + 1);
 			sphere_indices.push_back(o + 1);
+			if (o + CIRCLE_N + 1 >= (SPHERE_N + 1) * (CIRCLE_N + 1)) {
+				cout << "sphere index error" << endl;
+			}
 		}
 	}
 	my_glBufferInit();
 
 	//glBufferData(GL_ARRAY_BUFFER, sizeof(vertex) * sphere_vertices.size(), &sphere_vertices[0], GL_STATIC_DRAW);
-	vertex_chunk = newVertexChunk(sizeof(vertex) * sphere_vertices.size());
-	index_chunk = newIndexChunk(sizeof(uint) * sphere_indices.size());
-	my_glBufferData(vertex_chunk, &sphere_vertices[0]);
-	my_glBufferData(index_chunk, &sphere_indices[0]);
+
+	myMesh* tmp = new myMesh(10, 100);
+	sphereMesh = new myMesh(sphere_vertices.size(), sphere_indices.size());
+	sphereMesh->vertices = sphere_vertices;
+	sphereMesh->indices = sphere_indices;
+	sphereMesh->update();
 }
 
 
@@ -83,13 +92,6 @@ void update()
 	mat4 model_matrix = mat4::scale( scale, scale, scale );
 
 	// update uniform variables in vertex/fragment shaders
-	float pi = PI/3;
-	vec3 norm = { sin(t) * cos(pi),sin(t) * sin(pi),cos(t) };
-	norm *= 2.0f;
-	vertex tmp_vertex = sphere_vertices[300];
-	//tmp_vertex.pos =  sphere_vertices[300].pos*(1.0f+ cos(t))*10.0f;
-	tmp_vertex.pos *=  (1.0f+ cos(t*10.0f))*2.0f;
-	glBufferSubData(GL_ARRAY_BUFFER,sizeof(vertex)*300,sizeof(vertex), &tmp_vertex);
 	GLint uloc;
 	uloc = glGetUniformLocation(program, "view_matrix");			if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, cam.view_matrix);
 	uloc = glGetUniformLocation(program, "projection_matrix");		if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, cam.projection_matrix);
@@ -107,14 +109,14 @@ void render(int a)
 	for (int i = a; i < a+1; i++) {
 		float orb_w = 2*PI / planets[i].orb_P;
 		float rot_w = 2*PI / planets[i].rot_P;
-		mat4 model_matrix =
-			mat4::rotate(vec3(0, 0, 1), orb_w * t) *
-			mat4::translate(planets[i].dist, 0, 0) *
-			mat4::scale(planets[i].rad, planets[i].rad, planets[i].rad) *
-			mat4::rotate(vec3(0, 0, 1), rot_w * t);
-		GLint uloc = glGetUniformLocation(program, "model_matrix");
-		if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, model_matrix);
-		drawIndexChunk(index_chunk);
+		mat4 model_matrix = mat4::scale(1.0f) *
+			mat4::translate(cam.at);
+			//mat4::rotate(vec3(0, 0, 1), orb_w * t) *
+			//mat4::translate(planets[i].dist, 0, 0) *
+			//mat4::scale(planets[i].rad, planets[i].rad, planets[i].rad) *
+			//mat4::rotate(vec3(0, 0, 1), rot_w * t);
+		applyModelMatrix(model_matrix);
+		sphereMesh->render();
 	}
 
 }
@@ -177,45 +179,74 @@ void mouse( GLFWwindow* window, int button, int action, int mods )
 	bool is_ctrl_pressed =
 		glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS
 		|| glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS;
+
+	// track ball
 	if((button==GLFW_MOUSE_BUTTON_LEFT&&!is_shift_pressed&&is_ctrl_pressed)
 		||button==GLFW_MOUSE_BUTTON_MIDDLE)
 	{
-		vec2 npos = cursor_to_ndc( pos, window_size );
-		if(action==GLFW_PRESS)			tb.begin( cam.view_matrix, npos );
+		if (action == GLFW_PRESS) {
+			tb_tracking = true;
+			padding_past = pos;
+		}
 	}
+	// zoom
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT||
 		(button == GLFW_MOUSE_BUTTON_LEFT &&is_shift_pressed)) {
 		if (action == GLFW_PRESS) { zoom_tracking = true; zoom_y_past = (float)pos.y; }
 	}
+	// padding
 	else if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		padding = true;
 		padding_past = pos;
 	}
 
 	if (action == GLFW_RELEASE) {
-		tb.end();
 		zoom_tracking = false;
+		tb_tracking = false;
 		padding = false;
 	}
 }
 
 void motion( GLFWwindow* window, double x, double y )
 {
-	if (tb.is_tracking()) {
-		vec2 npos = cursor_to_ndc(dvec2(x, y), window_size);
-		cam.view_matrix = tb.update(npos);
-	}
-	if (zoom_tracking) {
-		cam.view_matrix = mat4::translate(0, 0, (float)(zoom_y_past-y))*cam.view_matrix;
-		zoom_y_past = (float)y;
-	}
-	if (padding) {
-		cam.view_matrix = mat4::translate(
-			-float(padding_past.x-x), 
-			float(padding_past.y-y), 
-			0)*cam.view_matrix;
+	float dx = float(x - padding_past.x);
+	float dy = float(y - padding_past.y);
+	if (tb_tracking) {
+		vec3 re = cam.eye - cam.at;
+		vec4 e = { re.x,re.y,re.z, 1 };
+		float th = dy * 0.001f;
+		float pi = dx * 0.001f;
+		//e = mat4::rotate(cam.up.cross(re).cross(re).normalize(), pi) * e;
+		e = mat4::rotate(-cam.up.cross(re).normalize(), th) * e;
+
+		cam.eye = cam.at + vec3(e.x, e.y, e.z);
+
 		padding_past = dvec2(x, y);
 	}
+	if (zoom_tracking) {
+		float ratio = 0.5f;
+		vec3 re = cam.eye - cam.at;
+		if (re.length() < 30.0f && zoom_y_past - y < 0) {
+			// do nothing eye is too close to the object
+		}
+		else {
+			cam.eye += float(zoom_y_past - y)*re.normalize() * ratio;
+			zoom_y_past = (float)y;
+		}
+	}
+	if (padding) {
+		vec3 re = cam.eye - cam.at;
+		re = re.normalize();
+		float ratio = 0.001f * (cam.eye -cam.at).length();
+		cam.at	-=  cam.up.cross(re).cross(re).normalize() * dy * ratio;
+		cam.eye -=  cam.up.cross(re).cross(re).normalize() * dy * ratio;
+		cam.at	-= -cam.up.cross(re).cross(re).cross(re).normalize() * dx * ratio;
+		cam.eye -= -cam.up.cross(re).cross(re).cross(re).normalize() * dx * ratio;
+		//cam.at -= vec3(float(padding_past.y - y), float(padding_past.x - x), 0) * ratio;
+		//cam.eye -= vec3(float(padding_past.y - y), float(padding_past.x - x), 0) * ratio;
+		padding_past = dvec2(x, y);
+	}
+	cam.update();
 }
 
 bool user_init()
@@ -225,12 +256,13 @@ bool user_init()
 
 	// init GL states
 	glClearColor( 39/255.0f, 40/255.0f, 34/255.0f, 1.0f );	// set clear color
-	glEnable( GL_CULL_FACE );								// turn on backface culling
+	//glEnable( GL_CULL_FACE );								// turn on backface culling
 	glEnable( GL_DEPTH_TEST );								// turn on depth tests
 
 	// generate vertex_array vertex_bufer vertex_indices
 
 	generate_sphere();
+	bridgeMap = new BridgeMap();
 
 	// create 9 planets
 	float rad_list[9] = { 60.0f,10.0f,15.0f,20.0f,30.0f,40.0f,35.0f,43.0f,30.0f };
@@ -245,6 +277,8 @@ bool user_init()
 				orb_P_list[i] }
 		);
 	}
+
+	// birdge map
 
 	return true;
 }
@@ -270,13 +304,14 @@ int main( int argc, char* argv[] )
 	glfwSetCursorPosCallback( window, motion );		// callback for mouse movement
 
 	// enters rendering/event loop
-	Tmp tClass;
+	Tmp* tClass=new Tmp();
+	renderID sphereRenderID =attachRenderFunction(bind(&Tmp::render,tClass,0));
+	//detachRenderFunction(sphereRenderID);
+	attachRenderFunction(bind(&BridgeMap::render, bridgeMap));
 	for( frame=0; !glfwWindowShouldClose(window); frame++ )
 	{
 		glfwPollEvents();	// polling and processing of events
 		update();			// per-frame update
-		for(int i=0;i<9;i++)
-			pushRenderFunction(bind(&Tmp::render,tClass,i));
 		renderAll();			// per-frame render
 	}
 
