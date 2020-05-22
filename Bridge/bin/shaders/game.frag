@@ -32,13 +32,19 @@ vec4 phong( vec3 l, vec3 n, vec3 h, vec4 Kd )
 	vec4 Irs = max(Ks*pow(dot(h,n),shininess)*Is,0.0);	// specular reflection
 	return Ira + Ird + Irs;
 }
+vec4 attenuate(vec4 color,vec4 lpos)
+{
+	vec3 l = normalize(lpos.xyz - epos.xyz);
+	float d = length(lpos.xyz - epos.xyz);
+	d/=100;
+	float a = 1.0 / (1.0 + 0.22*d + 0.019*d*d);
+	return color*a;
+}
 
 void main()
 {
 	// light position in the eye space
-	vec4 lpos;
-	//lpos = view_matrix*light_position;
-	lpos = light_position;
+	vec4 lpos = view_matrix*light_position;
 
 	vec3 n = normalize(norm);	// norm interpolated via rasterizer should be normalized again here
 	vec3 p = epos.xyz;			// 3D position of this fragment
@@ -47,7 +53,6 @@ void main()
 	vec3 h = normalize(l+v);	// the halfway vector
 
 	//vec4 iKd = texture( TEX, tc );	// Kd from image
-
 	/*
 	if(mode==0)			fragColor = phong( l, n, h, iKd );
 	else if(mode==1)	fragColor = phong( l, n, h, Kd );
@@ -58,11 +63,11 @@ void main()
 
 	if(color_mode == 0u) {
 		fragColor = phong(l, n ,h,Kd);
+		fragColor = attenuate(fragColor,light_position);
     } else if(color_mode == 1u) {
         fragColor = vec4(tc.xxx, 1);
     } else if(color_mode == 2u) {
         fragColor = vec4(tc.yyy, 1);
     }
 
-	//fragColor = vec4(normalize(norm), 1.0);
 }

@@ -22,10 +22,6 @@ void main()
 	// pass eye-coordinate normal to fragment shader
 	norm = normalize(mat3(view_matrix*model_matrix)*normal);
 
-	// use normal vector as color
-	//norm = normal;
-
 	// texture
 	tc = texcoord;
-	epos =vec4(position,0);
 }

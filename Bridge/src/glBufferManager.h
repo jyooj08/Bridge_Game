@@ -7,7 +7,7 @@
 using namespace std;
 
 #define MAX_GL_BUFFER_SIZE		((size_t)5000000000)	//500MB
-#define DEFAULT_GL_BUFFER_SIZE	((size_t)100000000  )	//10MB
+#define DEFAULT_GL_BUFFER_SIZE	((size_t)100000000 )	//10MB
 
 typedef struct glChunk {
 	GLenum target;

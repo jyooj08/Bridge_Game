@@ -46,9 +46,12 @@ public:
 	// 3D object control
 	void rotate(vec3 axis, float th) {
 		mat4 R = mat4::rotate(axis.normalize(), th);
+		vec4 p = vec4(position, 0);
 		vec4 x = R * vec4(xa,1.0f);
 		vec4 y = R * vec4(ya,1.0f);
 		vec4 z = R * vec4(za,1.0f);
+		p = R * p;
+		position = vec3(p.x, p.y, p.z);
 		xa = vec3(x.x,x.y,x.z);
 		ya = vec3(y.x,y.y,y.z);
 		za = vec3(z.x,z.y,z.z);
@@ -61,6 +64,7 @@ public:
 	void scale(float s) { xa /= s; ya /= s; za /= s; }
 	void translate(vec3 v)		{ position += v; }
 	void setPosition(vec3 v)	{ position = v; }
+	vec3 getPosition()			{ return position; }
 	void setOrigin(vec3 v)		{ origin = v; }
 
 	// easy vec3 use

@@ -43,8 +43,14 @@ struct myMesh {
 		drawIndexChunk(indexChunk, vertexChunk->offset / sizeof(vertex));
 	}
 	void paint(vec4 color) {
+		return;
 		for (auto& v : vertices) {
 			v.norm = vec3(color.x, color.y,color.z);
+		}
+	}
+	void flipNormal() {
+		for (auto& v : vertices) {
+			v.norm *= -1.0f;
 		}
 	}
 	void newPaint() {
