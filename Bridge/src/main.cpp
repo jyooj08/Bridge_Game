@@ -13,12 +13,16 @@ using namespace std;
 bool zoom_tracking = false;
 bool padding = false;
 bool tb_tracking = false;
+bool handle_tracking = false;
+enum{NONE,Y_AXIS,X_AXIS} mouse_lock;
 
 //*************************************
 
 myMesh* sphereMesh;
 BridgeMap* bridgeMap;
 myMesh* directorMesh;
+
+Basic3dObject* room;
 
 bool wire_mode = false;
 uint color_mode = 0;
@@ -143,19 +147,23 @@ void mouse( GLFWwindow* window, int button, int action, int mods )
 		}
 	}
 	// padding on RIGHT, SHIFT-LEFT
-	else if (button == GLFW_MOUSE_BUTTON_RIGHT||
-		(button == GLFW_MOUSE_BUTTON_LEFT &&is_shift_pressed)) {
+	else if (button == GLFW_MOUSE_BUTTON_LEFT &&is_shift_pressed) {
 		if (action == GLFW_PRESS) { padding = true; }
 	}
 	// track ball LEFT
 	else if (button == GLFW_MOUSE_BUTTON_LEFT) {
 		tb_tracking = true;
 	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+		handle_tracking = true;
+	}
 
 	if (action == GLFW_RELEASE) {
 		zoom_tracking = false;
 		tb_tracking = false;
+		handle_tracking = false;
 		padding = false;
+		mouse_lock = NONE;
 	}
 }
 
@@ -165,14 +173,28 @@ void motion( GLFWwindow* window, double x, double y )
 	float dx = float(x - padding_past.x);
 	float dy = float(y - padding_past.y);
 	if (tb_tracking) {
-		float s = 0.002f; //sensetive
-		cam.trackBallMove(dy*s,dx*s);
-
+		float s = 0.002f; // sensitivity
+		if (mouse_lock == NONE || abs(dy/dx) >10 || abs(dx/dy) >10 ) {
+			if (abs(dy) > abs(dx)) {
+				mouse_lock = Y_AXIS;
+			}
+			else {
+				mouse_lock = X_AXIS;
+			}
+		}
+		if(mouse_lock == Y_AXIS)
+			cam.trackBallMove(dy * s, 0);
+		else if(mouse_lock == X_AXIS)
+			cam.trackBallMove(0, dx*s);
+	}
+	if (handle_tracking) {
+		float s = 0.002f; // sensitivity
+		cam.trackBallMove(0,0,((dx>window_size.y/2)?dy:-dy)*s);
 	}
 	if (zoom_tracking) {
 		float ratio = 0.5f;
 		vec3 re = cam.eye - cam.at;
-		if (re.length() < 1.0f && dy< 0) {
+		if (re.length() < 5.0f && dy< 0) {
 			// do nothing eye is too close to the object
 		}
 		else {
@@ -200,10 +222,57 @@ bool user_init()
 	my_glBufferInit();
 	sphereMesh = generateSphereMesh();
 	bridgeMap = new BridgeMap();
+
+	// generate director mesh
 	myMesh* x = generateBoxMesh(vec3(10,0.5,0.5));
 	myMesh* y = generateBoxMesh(vec3(0.5,10,0.5));
 	myMesh* z = generateBoxMesh(vec3(0.5,0.5,10));
+	x->paint(1,0,0);
+	y->paint(0,1,0);
+	z->paint(0,0,1);
 	directorMesh = mergeMesh(mergeMesh(x, y),z);
+	attachRenderFunction([]() {								// render camera director
+		mat4 model_matrix = mat4::translate(cam.at) *
+			mat4::scale((cam.at - cam.eye).length()/200);
+		applyModelMatrix(model_matrix);
+		directorMesh->render();});
+
+	// generate room mesh & object
+	static myMesh* roomMesh = generateBoxMesh(vec3(100));
+	attachAnimatorFunction([](double t) {
+		float ct = float(glfwGetTime());
+		ct = ct - int(ct / 1);
+		roomMesh->gPaint(.3f,.2f,.2f);
+		roomMesh->update();
+	});
+	roomMesh->gPaint(1.0f,.5f);
+	room = new Basic3dObject(roomMesh);
+	room->setOrigin(50, 50, 50);
+	room->scale(30);
+	attachRenderFunction([]() {room->render(); });
+
+	// register event callbacks
+	glfwSetWindowSizeCallback( window, reshape );	// callback for window resizing events
+    glfwSetKeyCallback( window, keyboard );			// callback for keyboard events
+	glfwSetMouseButtonCallback( window, mouse );	// callback for mouse click inputs
+	glfwSetCursorPosCallback( window, motion );		// callback for mouse movement
+
+	// register render functions
+	attachRenderFunction(bind(&BridgeMap::render, bridgeMap));
+
+
+	// attach frame counter
+	attachAnimatorFunction([](double t) {
+		static int past_frame = frame;
+		static double fps = double((frame - past_frame) / t);
+		const double a = 0.006f;
+		fps = (frame - past_frame) / t * a + fps * (1 - a);
+		printf("\r fps : %-4d frame_count : %d", (int)fps,frame);
+		past_frame = frame;
+	});
+
+	// attach bridgeMap animation
+	attachAnimatorFunction([](double t) {bridgeMap->animate(t); });
 
 	return true;
 }
@@ -222,33 +291,6 @@ int main( int argc, char* argv[] )
 	if(!(program=cg_create_program( vert_shader_path, frag_shader_path ))){ glfwTerminate(); return 1; }	// create and compile shaders/program
 	if(!user_init()){ printf( "Failed to user_init()\n" ); glfwTerminate(); return 1; }						// user initialization
 
-	// register event callbacks
-	glfwSetWindowSizeCallback( window, reshape );	// callback for window resizing events
-    glfwSetKeyCallback( window, keyboard );			// callback for keyboard events
-	glfwSetMouseButtonCallback( window, mouse );	// callback for mouse click inputs
-	glfwSetCursorPosCallback( window, motion );		// callback for mouse movement
-
-	// register render functions
-	Tmp* tClass=new Tmp();
-	//renderID sphereRenderID =attachRenderFunction(bind(&Tmp::render,tClass,0));
-	attachRenderFunction(bind(&BridgeMap::render, bridgeMap));
-
-	// camera director
-	attachRenderFunction([]() {
-		mat4 model_matrix = mat4::translate(cam.at) *
-			mat4::scale((cam.at - cam.eye).length()/80);
-		applyModelMatrix(model_matrix);
-		directorMesh->render();});
-
-	// attach frame counter
-	attachAnimatorFunction([](double t) {
-		static int past_frame = frame;
-		static double fps = double((frame - past_frame) / t);
-		const double a = 0.006f;
-		fps = (frame - past_frame) / t * a + fps * (1 - a);
-		printf("\r fps : %-4d frame_count : %d", (int)fps,frame);
-		past_frame = frame;
-	});
 
 	// enters rendering/event loop
 	for( frame=0; !glfwWindowShouldClose(window); frame++ )

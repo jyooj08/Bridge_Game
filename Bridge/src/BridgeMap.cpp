@@ -5,48 +5,45 @@
 
 BridgeMap::BridgeMap() {
 	// sample path // TODO : delete sample
-	Tile sample_path[] = "UULLUUURR";
+	Tile sample_path[] = "UULLJUUUJRRUULULJLUURRURJJURRRURJJLJLU";
 	for (auto t : sample_path) {
 		if (t == '\0') break;
 		path.push_back(t);
 	}
 
 	// vertex & index 
-	tileMesh = generateBoxMesh(tile_size);
-	// texture color 
-	for (auto& v : tileMesh->vertices) {
-		static vec2 col = { 0.0f,0.0f };
-		col += {0.1f,0.1f};
-		v.tex = col;
-	}
+	
+	tile.setMesh(generateBoxMesh(tile_size));
+	tile.getMesh()->gPaint(1,0,0);
+	tile.setOrigin(vec3(5,0.5f,5));
 }
 
 void BridgeMap::render() {
-	float size = 1.0f;
-	mat4 model = mat4::scale(size);
-	applyModelMatrix(model);
+	tile.setPosition(position);
 	for (size_t i = 0; i < path.size(); i++) {
-		applyModelMatrix(model);
-		tileMesh->render();
+		tile.render();
 
-		// make model matrix for next tile
 		while (path[i] == 'J') {
-			model *= mat4::translate(0,0,5.0f);
+			tile.translate(vec3(0,5.0f,0));
 			i++;
 		}
 		switch (path[i]) {
 		case 'U':
-			model *= mat4::translate(tile_size.x, 0, 0);
+			tile.translate(vec3(0,0,10.0f));
 			break;
 		case 'D':
-			model *= mat4::translate(-tile_size.x, 0, 0);
+			tile.translate(vec3(0,0,-10.0f));
 			break;
 		case 'L':
-			model *= mat4::translate(0, -tile_size.y, 0);
+			tile.translate(vec3(-10.0f,0,0));
 			break;
 		case 'R':
-			model *= mat4::translate(0, +tile_size.y, 0);
+			tile.translate(vec3(10.0f,0,0));
 			break;
 		}
 	}
+}
+
+void BridgeMap::animate(double t) {
+	tile.rotate((float)t);
 }

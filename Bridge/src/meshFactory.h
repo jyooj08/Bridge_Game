@@ -54,7 +54,7 @@ inline struct myMesh* generateBoxMesh(vec3 scale=vec3(1,1,1)) {
 // Default Sphere Mesh 
 
 static vector<vertex> _sphere_vertices;
-static vector<uint> _sphere_indices;
+static vector<uint>	  _sphere_indices;
 
 inline struct myMesh* generateSphereMesh(vec3 scale=vec3(1,1,1),uint cN=50,uint sN=30) {
 	if (_sphere_vertices.size() < cN * sN) {

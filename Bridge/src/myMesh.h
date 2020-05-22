@@ -42,6 +42,28 @@ struct myMesh {
 		if (update_flag == false) update();
 		drawIndexChunk(indexChunk, vertexChunk->offset / sizeof(vertex));
 	}
+	void paint(vec4 color) {
+		for (auto& v : vertices) {
+			v.norm = vec3(color.x, color.y,color.z);
+		}
+	}
+	void newPaint() {
+		paint(vec4(0.5f));
+	}
+
+	// convenient functions
+	void paint(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) {
+		paint(vec4(r, g, b, a)); }
+
+	void gPaint(float r = 0.0f, float g = 0.0f, float b = 0.0f,float c = 0.5f) {
+		float d = 0.5f / vertices.size();
+		float o = 0;
+		for (auto& v : vertices) {
+			if (o > c && d > 0.0f) d = -d;
+			v.norm = vec3(r+o,g+o,b+o);
+			o += d;
+		}
+	}
 };
 
 inline myMesh* mergeMesh(myMesh* ma, myMesh* mb) {
@@ -53,6 +75,12 @@ inline myMesh* mergeMesh(myMesh* ma, myMesh* mb) {
 		newMesh->indices.push_back(i + ma->vertices.size());
 	}
 	return newMesh;
+}
+
+inline void paintMesh(myMesh* m, vec4 color) {
+	for (auto& v : m->vertices) {
+		v.tex = vec2(color.x, color.y);
+	}
 }
 
 #endif

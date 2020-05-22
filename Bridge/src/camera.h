@@ -6,25 +6,29 @@
 
 typedef struct camera
 {
-	vec3	eye = vec3( 0.01f,0, 100 );
+	vec3	eye = vec3( 100,0, 100 );
 	vec3	at = vec3( 0, 0, 0 );
-	vec3	up = vec3( 1, 0,0 );
+	vec3	up = vec3( 0, 1,0 );
 	mat4	view_matrix = mat4::look_at( eye, at, up );
 	void update() {
 		//aspect = window_size.x/float(window_size.y);
 		view_matrix = mat4::look_at(eye, at, up);
 		projection_matrix = mat4::perspective( fovy, aspect, dnear, dfar );
 	}
-	void trackBallMove(float th, float pi) { // pi : UD angle, th : LR angle 
+	void trackBallMove(float th, float pi=0.0f,float om=0.0f) { // pi : UD angle, th : LR angle 
 		vec3 re = eye - at;
 		vec4 e = { re.x,re.y,re.z, 0 };
 		vec4 u = { up.x, up.y, up.z, 0 };
 		vec3 tby = re.cross(up).normalize();
 		vec3 tbx = tby.cross(re).normalize();
+		vec3 tbz = tbx.cross(tby).normalize();
 		e = mat4::rotate(tby, th) * e;
 		u = mat4::rotate(tby, th) * u;
 		e = mat4::rotate(tbx, -pi) * e;
 		u = mat4::rotate(tbx, -pi) * u;
+		e = mat4::rotate(tbz, om) * e;
+		u = mat4::rotate(tbz, om) * u;
+
 		eye = at + vec3(e.x, e.y, e.z);
 		up = vec3(u.x, u.y, u.z);
 	}

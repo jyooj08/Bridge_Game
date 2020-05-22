@@ -64,6 +64,7 @@
     <ClCompile Include="render.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3dObject.h" />
     <ClInclude Include="animator.h" />
     <ClInclude Include="BridgeMap.h" />
     <ClInclude Include="camera.h" />

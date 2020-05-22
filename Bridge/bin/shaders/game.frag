@@ -17,7 +17,8 @@ out vec4 fragColor;
 void main()
 {
 	if(color_mode == 0u) {
-        fragColor = vec4(tc.xy, 0, 1);
+		fragColor = vec4(norm, 1.0);
+        //fragColor = vec4(tc.xy, 0, 1);
     } else if(color_mode == 1u) {
         fragColor = vec4(tc.xxx, 1);
     } else if(color_mode == 2u) {
