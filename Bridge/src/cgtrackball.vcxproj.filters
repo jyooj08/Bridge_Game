@@ -50,14 +50,14 @@
     <ClCompile Include="animator.cpp">
       <Filter>Source Files\Executor</Filter>
     </ClCompile>
-    <ClCompile Include="glBufferManager.cpp">
-      <Filter>Source Files\Tools</Filter>
-    </ClCompile>
     <ClCompile Include="gl\glad\glad.c">
       <Filter>External Libraries</Filter>
     </ClCompile>
     <ClCompile Include="god.cpp">
       <Filter>Source Files\Executor</Filter>
+    </ClCompile>
+    <ClCompile Include="glBufferManager.cpp">
+      <Filter>Source Files\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -72,9 +72,6 @@
     </ClInclude>
     <ClInclude Include="animator.h">
       <Filter>Header Files\Executor</Filter>
-    </ClInclude>
-    <ClInclude Include="glBufferManager.h">
-      <Filter>Header Files\Tools</Filter>
     </ClInclude>
     <ClInclude Include="trackball.h">
       <Filter>Header Files\Tools</Filter>
@@ -100,7 +97,10 @@
     <ClInclude Include="3dObject.h">
       <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="logic.h">
+    <ClInclude Include="callBackManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="glBufferManager.h">
       <Filter>Header Files\Tools</Filter>
     </ClInclude>
   </ItemGroup>

@@ -36,6 +36,36 @@ extern trackball	tb;
 // global variables
 extern int		frame;				// index of rendering frames
 
-// global functions
 
+//*************************************
+// scene objects
+extern camera		cam;
+extern trackball	tb;
+
+// control options
+extern bool zoom_trackin;
+extern bool padding ;
+extern bool tb_tracking ;
+extern bool handle_tracking ;
+enum MouseLock { NONE=0, Y_AXIS, X_AXIS };
+extern MouseLock mouse_lock;
+
+// my options
+
+extern bool wire_mode;
+extern uint color_mode;
+extern bool rotate_mode;
+
+//************************************ 
+// simple functions
+
+void print_help();
+
+//*************************************
+// call back functions
+
+void reshape(GLFWwindow* window, int width, int height);
+void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods);
+void mouse(GLFWwindow* window, int button, int action, int mods);
+void motion(GLFWwindow* window, double x, double y);
 #endif // _GLOBAL_H_

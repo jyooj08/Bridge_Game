@@ -7,7 +7,6 @@ using namespace std;
 
 typedef char Tile;
 
-
 class BridgeMap
 {	
 public:
@@ -19,11 +18,6 @@ public:
 	void animate(double t);
 private:
 	Basic3dObject tile;
-	//myMesh* tileMesh;
-	glChunk* tileVertexChunk = NULL;
-	glChunk* tileIndexChunk = NULL;
-	vector<vertex>	tileVertices;
-	vector<uint>	tileIndices;
 
 	vector<Tile> path;
 };

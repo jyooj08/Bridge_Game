@@ -11,10 +11,10 @@ BridgeMap::BridgeMap() {
 		path.push_back(t);
 	}
 
-	// vertex & index 
-	
+	// 3D Object setting
 	tile.setMesh(generateBoxMesh(tile_size));
-	tile.getMesh()->gPaint(1,0,0);
+	tile.getMesh()->paint(0, 1, 0);
+	//tile.getMesh()->gPaint(1,0,0);
 	tile.setOrigin(vec3(5,0.5f,5));
 }
 

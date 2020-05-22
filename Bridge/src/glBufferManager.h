@@ -31,5 +31,4 @@ GLint applyCamera(camera arg_cam);
 GLint setUniformVariable(std::string var_name, uint value);
 
 
-
 #endif
