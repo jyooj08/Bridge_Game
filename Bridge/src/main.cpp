@@ -6,6 +6,7 @@
 #include "BridgeMap.h"
 #include "camera.h"
 #include "myMesh.h"
+#include "logic.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -23,6 +24,8 @@ BridgeMap* bridgeMap;
 myMesh* directorMesh;
 
 Basic3dObject* room;
+
+Logic logic("uuuurruu");
 
 bool wire_mode = false;
 uint color_mode = 0;
@@ -102,6 +105,12 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 		}
 		else if (key == GLFW_KEY_R) {
 			rotate_mode = !rotate_mode;
+		}
+		else if (key == GLFW_KEY_RIGHT) {
+			logic.turn_right();
+		}
+		else if (key == GLFW_KEY_LEFT) {
+			logic.turn_left();
 		}
 		else {
 			if (key == GLFW_KEY_W && cF == 0) 
@@ -291,7 +300,7 @@ int main( int argc, char* argv[] )
 	if(!(program=cg_create_program( vert_shader_path, frag_shader_path ))){ glfwTerminate(); return 1; }	// create and compile shaders/program
 	if(!user_init()){ printf( "Failed to user_init()\n" ); glfwTerminate(); return 1; }						// user initialization
 
-
+	logic.start_game();
 	// enters rendering/event loop
 	for( frame=0; !glfwWindowShouldClose(window); frame++ )
 	{
@@ -301,6 +310,8 @@ int main( int argc, char* argv[] )
 		// object which is ATTACHED on animated object should update position after animateAll() !!!
 		animateAll();
 		update();			
+
+		logic.update();
 
 		renderAll();			// per-frame render
 	}

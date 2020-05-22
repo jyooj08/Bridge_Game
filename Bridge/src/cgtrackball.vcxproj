@@ -73,6 +73,7 @@
     <ClInclude Include="glBufferManager.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="god.h" />
+    <ClInclude Include="logic.h" />
     <ClInclude Include="meshFactory.h" />
     <ClInclude Include="myMesh.h" />
     <ClInclude Include="render.h" />
