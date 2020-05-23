@@ -172,6 +172,7 @@ bool user_init()
 	// light box
 	attachAnimator([](double t) {
 		lightBox.rotate(0, 1, 0, float(t));
+		lightBox.translate(0,100 * cos((float)glfwGetTime())*(float)t,0);
 		light.position = vec4(lightBox.getPosition(),1);
 		light.ambient = abs(cos((float)glfwGetTime()));
 	});

@@ -5,6 +5,9 @@
 
 using namespace std; 
 
+typedef function<void(void)> render_function_t;
+typedef unsigned long long renderID;
+
 struct light_t
 {
 	vec4	position = vec4(1.0f, 1.0f, 1.0f, 0.0f);   // directional light
@@ -21,8 +24,22 @@ struct material_t
 	float	shininess = 1000.0f;
 };
 
-typedef function<void(void)> render_function_t;
-typedef unsigned long long renderID;
+struct render_function {
+	render_function_t function;
+	bool is_able = true;
+	render_function(render_function_t f) { function = f; }
+	bool excute() {
+		if (!isAble())	return false;
+		else {
+			function();
+			return true;
+		}
+	}
+	bool isAble()	{ return is_able; }
+	void disable()	{ is_able = false; }
+	void enable()	{ is_able = true; }
+};
+
 
 void pushRenderFunction(render_function_t);
 renderID attachRenderFunction(render_function_t render_function);

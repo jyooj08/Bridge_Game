@@ -1,7 +1,7 @@
 #include "render.h"
 
 #include <queue>
-#include <map>
+#include <unordered_map>
 #include <tuple>
 #include <vector>
 #include <iostream>
@@ -11,14 +11,14 @@ using namespace std;
 
 
 queue<render_function_t> _renderQ;
-map<renderID,render_function_t> _renderSet;
+unordered_map<renderID,render_function> _renderSet;
 static renderID nextRenderID = 0;
 queue<renderID> renderIDBasket;
 
-void pushRenderFunction(render_function_t render_function) {
-	_renderQ.push(render_function);
+void pushRenderFunction(render_function_t function) {
+	_renderQ.push(function);
 }
-renderID attachRenderFunction(render_function_t render_function) {
+renderID attachRenderFunction(render_function_t function) {
 	renderID newRenderID; 
 	if(renderIDBasket.empty())
 		newRenderID = nextRenderID++;
@@ -26,7 +26,7 @@ renderID attachRenderFunction(render_function_t render_function) {
 		newRenderID = renderIDBasket.front();
 		renderIDBasket.pop();
 	}
-	_renderSet.insert(make_pair(newRenderID,render_function));
+	_renderSet.insert(make_pair(newRenderID,render_function(function)));
 	return newRenderID;
 }
 void detachRenderFunction(renderID& renderID) {
@@ -51,7 +51,7 @@ void renderAll() {
 		f();
 	}
 	for (auto& p : _renderSet) {
-		p.second();
+		p.second.excute();
 	}
 	glfwSwapBuffers(window);
 }
