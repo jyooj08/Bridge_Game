@@ -11,7 +11,6 @@
 #include <iostream>
 using namespace std;
 
-
 //*************************************
 // test objects
 
@@ -29,7 +28,7 @@ void update();
 int gl_init();
 bool user_init();
 void user_finalize();
-
+bool init_text(); // in text.cpp
 
 int main( int argc, char* argv[] )
 {
@@ -39,12 +38,12 @@ int main( int argc, char* argv[] )
 	for( frame=0; !glfwWindowShouldClose(window); frame++ )
 	{
 		glfwPollEvents();	// polling and processing of events
-
+		
 		// NOTICE : update() and animateAll();
 		// object which is ATTACHED on animated object should update position after animateAll() !!!
 		animateAll();
 		update();			
-
+		
 		renderAll();			// per-frame render
 	}
 
@@ -93,8 +92,11 @@ int gl_init() {
 	if(!(program=cg_create_program( vert_shader_path, frag_shader_path ))){ glfwTerminate(); return 1; }	// create and compile shaders/program
 	// init GL states
 	glClearColor( 39/255.0f, 40/255.0f, 34/255.0f, 1.0f );	// set clear color
-	//glEnable( GL_CULL_FACE );								// turn on backface culling
+	glEnable( GL_CULL_FACE );								// turn on backface culling
 	glEnable( GL_DEPTH_TEST );								// turn on depth tests
+	
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// enable anti-aliasing
 	glEnable(GL_MULTISAMPLE);
@@ -188,6 +190,9 @@ bool user_init()
 		printf("\r fps : %-4d frame_count : %d", (int)fps,frame);
 		past_frame = frame;
 	});
+
+	// setup freetype
+	init_text();
 
 	return true;
 }

@@ -9,7 +9,7 @@ stbtt_fontinfo font_info;
 GLuint		VAO;			// vertex array for text objects
 GLuint		program_text;	// GPU program for text render
 
-static const char*	font_path = "../bin/fonts/Fish Grill.otf";				// from Windows/font/
+static const char*	font_path = "../bin/fonts/consola.ttf";				// from Windows/font/
 static const char*	vert_text_path = "../bin/shaders/text.vert";		// text vertex shaders
 static const char*	frag_text_path = "../bin/shaders/text.frag";		// text fragment shaders
 
@@ -131,7 +131,6 @@ void render_text( std::string text, GLint _x, GLint _y, GLfloat scale, vec4 colo
 		_y = int(_y*dpi_scale);
 		scale *= dpi_scale;
 	}
-
 	// Activate corresponding render state	
 	extern ivec2 window_size;
 	GLfloat x = GLfloat(_x);

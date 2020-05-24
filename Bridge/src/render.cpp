@@ -9,6 +9,9 @@
 
 using namespace std;
 
+// in text.cpp
+void render_text(std::string text, GLint x, GLint y, GLfloat scale, vec4 color, GLfloat dpi_scale = 1.0f);
+
 
 queue<render_function_t> _renderQ;
 unordered_map<renderID,render_function> _renderSet;
@@ -44,7 +47,13 @@ void detachRenderFunction(renderID& renderID) {
 
 void renderAll() {
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+	// render texts
+	float dpi_scale = cg_get_dpi_scale();
+	render_text("Sample text", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), dpi_scale);
+
 	glUseProgram( program );
+	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glBindVertexArray(vertex_array);
 	while (!_renderQ.empty()) {
 		render_function_t f = _renderQ.front(); _renderQ.pop();
@@ -53,6 +62,7 @@ void renderAll() {
 	for (auto& p : _renderSet) {
 		p.second.excute();
 	}
+
 	glfwSwapBuffers(window);
 }
 
