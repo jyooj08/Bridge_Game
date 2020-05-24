@@ -7,7 +7,7 @@
 using namespace std;
 
 #define MAX_GL_BUFFER_SIZE		((size_t)5000000000)	//500MB
-#define DEFAULT_GL_BUFFER_SIZE	((size_t)100000000  )	//10MB
+#define DEFAULT_GL_BUFFER_SIZE	((size_t)100000000 )	//10MB
 
 typedef struct glChunk {
 	GLenum target;
@@ -29,7 +29,6 @@ void drawIndexChunk(glChunk* chunk,GLint baseVertex);
 GLint applyModelMatrix(mat4 model_matrix);
 GLint applyCamera(camera arg_cam);
 GLint setUniformVariable(std::string var_name, uint value);
-
 
 
 #endif

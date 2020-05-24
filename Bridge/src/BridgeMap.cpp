@@ -5,16 +5,16 @@
 
 BridgeMap::BridgeMap() {
 	// sample path // TODO : delete sample
-	Tile sample_path[] = "UULLJUUUJRRUULULJLUURRURJJURRRURJJLJLU";
+	Tile sample_path[] = "UURRRJJURRRLRLRLRUUUUURRJRURRRURLRURLRULRULRURLRURLRLRUUURRRUDDDDDURURURLDURRRJJJJJJJJJDDDURLRURLRUDJDJDJDJDJDLJDDLDJLDJLDJRUURLURR";
 	for (auto t : sample_path) {
 		if (t == '\0') break;
 		path.push_back(t);
 	}
 
-	// vertex & index 
-	
+	// 3D Object setting
 	tile.setMesh(generateBoxMesh(tile_size));
-	tile.getMesh()->gPaint(1,0,0);
+	tile.getMesh()->paint(0, 1, 0);
+	//tile.getMesh()->gPaint(1,0,0);
 	tile.setOrigin(vec3(5,0.5f,5));
 }
 
