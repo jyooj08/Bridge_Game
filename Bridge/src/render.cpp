@@ -65,5 +65,3 @@ void renderAll() {
 
 	glfwSwapBuffers(window);
 }
-
-
