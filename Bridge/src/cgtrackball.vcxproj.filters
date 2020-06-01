@@ -145,6 +145,12 @@
     <ClInclude Include="logic.h">
       <Filter>Header Files\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="MyText.h">
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="animations.h">
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\shaders\game.frag">

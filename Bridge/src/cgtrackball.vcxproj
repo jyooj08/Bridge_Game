@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="3dObject.h" />
+    <ClInclude Include="animations.h" />
     <ClInclude Include="animator.h" />
     <ClInclude Include="assimp_loader.h" />
     <ClInclude Include="BridgeMap.h" />
@@ -87,6 +88,7 @@
     <ClInclude Include="meshFactory.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="myMesh.h" />
+    <ClInclude Include="MyText.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="text.h" />
