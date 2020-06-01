@@ -58,6 +58,7 @@
     <ClCompile Include="animator.cpp" />
     <ClCompile Include="assimp_loader.cpp" />
     <ClCompile Include="BridgeMap.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="glBufferManager.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="gl\glad\glad.c" />

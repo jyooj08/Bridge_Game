@@ -9,7 +9,7 @@ string game_map;
 int map_len;
 double last_time, now;
 
-extern Basic3dObject box2;
+extern Basic3dObject box;
 extern Basic3dObject lightBall;
 extern camera global_cam;
 
@@ -43,15 +43,15 @@ void turn_left() {
 void render_logic () {
 	if (game_mode == 0) return;
 	if (game_mode == 2) {
-		//cout << "\nWIN GAME\n";
-		render_text("WIN GAME", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), 1);
+		cout << "\nWIN GAME\n";
+		//render_text("WIN GAME", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), 1);
 		//game_mode = 0;
 		return;
 	}
 	if (game_mode == 3) {
-		//cout << "\nLOSE GAME\n";
+		cout << "\nLOSE GAME\n";
 		//box2.translate(vec3(0, -10, 0));
-		render_text("LOSE GAME", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), 1);
+		//render_text("LOSE GAME", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), 1);
 		//game_mode = 0;
 		return;
 	}
@@ -62,22 +62,22 @@ void render_logic () {
 		//move
 		switch (direction[di]) {
 		case 'U':
-			box2.translate(vec3(0, 0, -10));
+			box.translate(vec3(0, 0, -10));
 			lightBall.translate(vec3(0, 0, -10));
 			global_cam.basicMove(vec3(0, 0, -10));
 			break;
 		case 'R':
-			box2.translate(vec3(10, 0, 0));
+			box.translate(vec3(10, 0, 0));
 			lightBall.translate(vec3(10, 0, 0));
 			global_cam.basicMove(vec3(10, 0, 0));
 			break;
 		case 'D':
-			box2.translate(vec3(0, 0, 10));
+			box.translate(vec3(0, 0, 10));
 			lightBall.translate(vec3(0, 0, 10));
 			global_cam.basicMove(vec3(0, 0, 10));
 			break;
 		case 'L':
-			box2.translate(vec3(-10, 0, 0));
+			box.translate(vec3(-10, 0, 0));
 			lightBall.translate(vec3(-10, 0, 0));
 			global_cam.basicMove(vec3(-10, 0, 0));
 			break;

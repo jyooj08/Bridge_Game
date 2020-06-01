@@ -28,7 +28,7 @@ BridgeMap* bridgeMap;
 Mesh* directorMesh;
 
 Basic3dObject* room;
-Basic3dObject box2(generateBoxMesh(vec3(9)));
+Basic3dObject box(generateBoxMesh(vec3(9)));
 Basic3dObject lightBall(generateSphereMesh());
 
 light_t		light; // should be global!!
@@ -149,20 +149,7 @@ bool user_init()
 
 
 	// box
-	static Basic3dObject box(generateBoxMesh(vec3(10)));
-	box.setOrigin(5, 5, 5);
-	box.rotate(vec3(1, 0, 0), PI / 4,true);
-	box.rotate(vec3(0, 0, 1), PI / 4,true);
-	box.setPosition(-20, sqrt(10*10*3.0f)/2, -20);
-	//box.setPosition(0, 10, 0);
-	box2.setMaterial(_ruby);
-	//box2.setOrigin(5, 5, 5);
-
-	// ball
-	static Basic3dObject ball(generateSphereMesh(vec3(10)));
-	ball.setPosition(5, 10, 20);
-	ball.translate(vec3(0, 10, 0) );
-	ball.rotate(0, 1, 0, float(PI/4));
+	box.setMaterial(_ruby);
 	
 	// ground 
 	static Basic3dObject ground(generateBoxMesh(vec3(100,2,100)));
@@ -192,8 +179,6 @@ bool user_init()
 	disableLightEffect(lightBallID);
 	put2render(&ground);
 	put2render(&box);
-	put2render(&box2);
-	put2render(&ball);
 
 	// animation 
 
@@ -209,7 +194,6 @@ bool user_init()
 	attachAnimator([](double t) {
 		//box.rotate(vec3(0,1,0), float(t),true);
 		//box.rotate(0,1,0, float(t));
-		ball.rotate(0, 1, 0, float(t));
 		//ball.translate(vec3(0, 10, 0) );
 	});
 
