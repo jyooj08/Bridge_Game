@@ -10,7 +10,7 @@ typedef char Tile;
 class BridgeMap
 {	
 public:
-	const vec3 tile_size=vec3(10.0f,1.0f,10.0f); // 10x1x10 size tile
+	const vec3 tile_size=vec3(10.0f,1.0f,10.0f)*0.9f; // 10x1x10 size tile
 	vec3 position = vec3(0, 0, -tile_size.z);
 	BridgeMap();
 	void loadPath();

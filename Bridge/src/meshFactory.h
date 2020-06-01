@@ -9,6 +9,61 @@
 using namespace std;
 
 
+// Default Face Meshes
+
+static const vector<uint>	_face_indices = { 0,1,2,0,1,3, };
+
+static const vector<vertex> _bottom_vertices = {
+		{{0,0,0},{0,0,-1},{0,0}},	
+		{{1,1,0},{0,0,-1},{0,0}},
+		{{1,0,0},{0,0,-1},{0,0}},	
+		{{0,1,0},{0,0,-1},{0,0}},
+};
+static const vector<vertex> _left_vertices = {
+		{{0,0,0},{0,-1,0},{0,0}},
+		{{1,0,1},{0,-1,0},{0,0}},
+		{{1,0,0},{0,-1,0},{0,0}},
+		{{0,0,1},{0,-1,0},{0,0}},
+};
+static const vector<vertex> _right_vertices = {
+		{{0,1,0},{0,1,0},{0,0}},
+		{{1,1,1},{0,1,0},{0,0}},
+		{{1,1,0},{0,1,0},{0,0}},
+		{{0,1,1},{0,1,0},{0,0}},
+};
+static const vector<vertex> _front_vertices = {
+		{{0,0,0},{-1,0,0},{0,0}},
+		{{0,1,1},{-1,0,0},{0,0}},
+		{{0,0,1},{-1,0,0},{0,0}},
+		{{0,1,0},{-1,0,0},{0,0}},
+};
+static const vector<vertex> _back_vertices = {
+		{{1,0,0},{1,0,0},{0,0}},
+		{{1,1,1},{1,0,0},{0,0}},
+		{{1,1,0},{1,0,0},{0,0}},
+		{{1,0,1},{1,0,0},{0,0}},
+};
+static const vector<vertex> _top_vertices = {
+		{{0,0,1},{0,0,1},{0,0}},
+		{{1,1,1},{0,0,1},{0,0}},
+		{{1,0,1},{0,0,1},{0,0}},
+		{{0,1,1},{0,0,1},{0,0}},
+};
+
+inline Mesh* generateRectMesh(vec3 scale = vec3(1, 1, 1)) {
+	// TODO : not completely implemented
+	static const vector<vertex> _base_rect_vertices = {
+		{{0,0,0},{0,0,-1},{0,0}},	
+		{{1,1,0},{0,0,-1},{0,0}},
+		{{1,0,0},{0,0,-1},{0,0}},	
+		{{0,1,0},{0,0,-1},{0,0}},
+	};
+	vector<vertex> _ret_rect_vertices;
+	return nullptr;
+}
+
+
+
 // Default Box Mesh 
 
 static const vector<vertex> _box_vertices = {
@@ -46,21 +101,21 @@ static const vector<vertex> _box_vertices = {
 
 static const vector<uint> _box_indices = {
 	// bottom
-	 0, 1, 2, 0, 1, 3,
+	 0, 1, 2, 3, 1, 0,
 	// left
-	 4, 5, 6, 4, 5, 7,
+	 6, 5, 4, 4, 5, 7,
 	// right
-	 8, 9,10, 8, 9,11,
+	 8, 9,10, 11, 9,8,
 	// front
-	12,13,14,12,13,15,
+	12,13,15,14,13,12,
 	// back
-	16,17,18,16,17,19,
+	18,17,16,16,17,19,
 	// top
-	20,21,22,20,21,23,
+	22,21,20,20,21,23,
 };
 
-inline struct myMesh* generateBoxMesh(vec3 scale=vec3(1,1,1)) {
-	myMesh* newMesh = new myMesh();
+inline struct Mesh* generateBoxMesh(vec3 scale=vec3(1,1,1)) {
+	Mesh* newMesh = new Mesh();
 	newMesh->vertices = _box_vertices;
 	// scale 
 	for (auto& v: newMesh->vertices) {
@@ -78,7 +133,7 @@ inline struct myMesh* generateBoxMesh(vec3 scale=vec3(1,1,1)) {
 static vector<vertex> _sphere_vertices;
 static vector<uint>	  _sphere_indices;
 
-inline struct myMesh* generateSphereMesh(vec3 scale=vec3(1,1,1),uint cN=50,uint sN=30) {
+inline struct Mesh* generateSphereMesh(vec3 scale=vec3(1,1,1),uint cN=50,uint sN=30) {
 	if (_sphere_vertices.size() < cN * sN) {
 		vector<vertex>& sphere_vertices = _sphere_vertices;
 		vector<uint>&	sphere_indices	= _sphere_indices;
@@ -87,7 +142,7 @@ inline struct myMesh* generateSphereMesh(vec3 scale=vec3(1,1,1),uint cN=50,uint 
 			for (uint k = 0; k <= cN; k++) {
 				float pi = (2.0f * (float)PI / cN) * (float)k;
 				vec3 norm = { sin(t) * cos(pi),sin(t) * sin(pi),cos(t) };
-				sphere_vertices.push_back({ norm, vec3(0), vec2((float)k / cN, 1 - (float)h / sN) });
+				sphere_vertices.push_back({ norm, norm.normalize(), vec2((float)k / cN, 1 - (float)h / sN) });
 			}
 		}
 		for (uint h = 0; h < sN; h++) {
@@ -102,7 +157,7 @@ inline struct myMesh* generateSphereMesh(vec3 scale=vec3(1,1,1),uint cN=50,uint 
 			}
 		}
 	}
-	myMesh* newMesh = new myMesh();
+	Mesh* newMesh = new Mesh();
 	newMesh->vertices = _sphere_vertices;
 	newMesh->indices = _sphere_indices;
 	return newMesh;

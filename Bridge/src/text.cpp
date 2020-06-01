@@ -76,6 +76,11 @@ void create_font_textures()
 	}
 }
 
+
+/*
+3dObject.h의 render 함수에 glBindbuffer
+render.cpp의 renderAll 함수에 glBindbuffer
+*/
 bool init_text()
 {
 	FILE* fp = fopen( font_path, "rb" ); if(!fp){ printf( "%s(): Unable to open %s\n", __func__, font_path ); return false; }
@@ -102,14 +107,14 @@ bool init_text()
 		{ vec3(1,0,0), vec3(0,0,0), vec2(1.0f,1.0f) },
 		{ vec3(1,1,0), vec3(0,0,0), vec2(1.0f,0.0f) } 
 	};
-
+	
 	GLuint vertex_buffer;
 	glGenBuffers( 1, &vertex_buffer );
 	glBindBuffer( GL_ARRAY_BUFFER, vertex_buffer );
 	glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
 
 	VAO = cg_create_vertex_array( vertex_buffer ); if(!VAO){ printf( "%s(): VAO==nullptr\n", __func__ ); return false; }
-
+	
 	return true;
 }
 

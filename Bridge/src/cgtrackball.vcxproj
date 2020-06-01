@@ -73,9 +73,11 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="cgmath.h" />
     <ClInclude Include="cgut.h" />
+    <ClInclude Include="Creature.h" />
     <ClInclude Include="glBufferManager.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="god.h" />
+    <ClInclude Include="material.h" />
     <ClInclude Include="meshFactory.h" />
     <ClInclude Include="myMesh.h" />
     <ClInclude Include="render.h" />
@@ -88,6 +90,8 @@
     <None Include="..\bin\shaders\game.vert">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\bin\shaders\shadow_depth.frag" />
+    <None Include="..\bin\shaders\shadow_depth.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -45,5 +45,4 @@ void BridgeMap::render() {
 }
 
 void BridgeMap::animate(double t) {
-	tile.rotate((float)t);
 }

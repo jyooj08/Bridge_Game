@@ -17,6 +17,8 @@
 extern const char*	window_name;
 extern const char*	vert_shader_path;
 extern const char*	frag_shader_path;
+extern const char*	shadow_vert_shader_path;
+extern const char*	shadow_frag_shader_path;
 //*************************************
 // window objects
 extern GLFWwindow*	window;
@@ -24,29 +26,24 @@ extern ivec2		window_size; // initial window size
 //*************************************
 // OpenGL objects
 extern GLuint	program;	// ID holder for GPU program
+extern GLuint	shadow_program;
 extern GLuint vertex_buffer;
 extern GLuint index_buffer;
 extern GLuint vertex_array;
 //*************************************
 // scene objects
-extern camera		cam;
-extern trackball	tb;
+extern camera		global_cam;
 
 //*************************************
 // global variables
 extern int		frame;				// index of rendering frames
-
-
-//*************************************
-// scene objects
-extern camera		cam;
-extern trackball	tb;
 
 // control options
 extern bool zoom_trackin;
 extern bool padding ;
 extern bool tb_tracking ;
 extern bool handle_tracking ;
+extern bool fps_mode;
 enum MouseLock { NONE=0, Y_AXIS, X_AXIS };
 extern MouseLock mouse_lock;
 

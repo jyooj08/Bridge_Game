@@ -1,12 +1,13 @@
 #include "global.h"
 #include "animator.h"
-#include "sound.h"
 
 //*************************************
 // global constants
 const char*	window_name = "Bridge";
 const char*	vert_shader_path = "../bin/shaders/game.vert";
 const char*	frag_shader_path = "../bin/shaders/game.frag";
+const char*	shadow_vert_shader_path = "../bin/shaders/shadow_depth.vert";
+const char*	shadow_frag_shader_path = "../bin/shaders/shadow_depth.frag";
 //*************************************
 // window objects
 GLFWwindow*	window = nullptr;
@@ -17,14 +18,14 @@ int		frame = 0;				// index of rendering frames
 
 //*************************************
 // scene objects
-camera		cam;
-trackball	tb;
+camera		global_cam;
 
 // control options
 bool zoom_tracking = false;
 bool padding = false;
 bool tb_tracking = false;
 bool handle_tracking = false;
+bool fps_mode = false;
 MouseLock mouse_lock;
 
 // my options
@@ -74,7 +75,7 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 	{
 		if(key==GLFW_KEY_ESCAPE||key==GLFW_KEY_Q)	glfwSetWindowShouldClose( window, GL_TRUE );
 		else if(key==GLFW_KEY_H||key==GLFW_KEY_F1)	print_help();
-		else if(key==GLFW_KEY_HOME)					cam=camera();
+		else if(key==GLFW_KEY_HOME)					global_cam=camera();
 		else if (key == GLFW_KEY_C) {
 			color_mode++;
 			color_mode %= 3;
@@ -91,22 +92,29 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 		else if (key == GLFW_KEY_R) {
 			rotate_mode = !rotate_mode;
 		}
-		else if (key == GLFW_KEY_SPACE) {
-			stop_sound();
+		else if (key == GLFW_KEY_1) {
+			fps_mode = !fps_mode;
+			if (fps_mode) {
+				global_cam.startControl();
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			}
+			else {
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			}
 		}
 		else {
 			if (key == GLFW_KEY_W && cF == 0) 
-				cF = attachAnimator([](double t) {cam.relativeMove(vec3(1, 0, 0) * (float)t * camera_speed); });
+				cF = attachAnimator([](double t) {global_cam.relativeMove(vec3(1, 0, 0) * (float)t * camera_speed); });
 			if (key == GLFW_KEY_S && cB == 0) 
-				cB = attachAnimator([](double t) {cam.relativeMove(vec3(-1, 0, 0) * (float)t * camera_speed); });
+				cB = attachAnimator([](double t) {global_cam.relativeMove(vec3(-1, 0, 0) * (float)t * camera_speed); });
 			if (key == GLFW_KEY_A && cL == 0) 
-				cL = attachAnimator([](double t) {cam.relativeMove(vec3(0, -1, 0) * (float)t * camera_speed); });
+				cL = attachAnimator([](double t) {global_cam.relativeMove(vec3(0, -1, 0) * (float)t * camera_speed); });
 			if (key == GLFW_KEY_D && cR == 0) 
-				cR = attachAnimator([](double t) {cam.relativeMove(vec3(0, 1, 0) * (float)t * camera_speed); });
+				cR = attachAnimator([](double t) {global_cam.relativeMove(vec3(0, 1, 0) * (float)t * camera_speed); });
 			if (key == GLFW_KEY_SPACE && glfwGetKey(window,GLFW_KEY_LEFT_SHIFT)!=GLFW_PRESS && cU == 0) 
-				cU = attachAnimator([](double t) {cam.relativeMove(vec3(0, 0, 1) * (float)t * camera_speed); });
+				cU = attachAnimator([](double t) {global_cam.relativeMove(vec3(0, 0, 1) * (float)t * camera_speed); });
 			if (key == GLFW_KEY_SPACE && glfwGetKey(window,GLFW_KEY_LEFT_SHIFT)==GLFW_PRESS && cD == 0) 
-				cD = attachAnimator([](double t) {cam.relativeMove(vec3(0, 0, -1) * (float)t * camera_speed); });
+				cD = attachAnimator([](double t) {global_cam.relativeMove(vec3(0, 0, -1) * (float)t * camera_speed); });
 		}
 	}
 	else if (action == GLFW_RELEASE){
@@ -143,12 +151,12 @@ void mouse( GLFWwindow* window, int button, int action, int mods )
 	}
 	// track ball LEFT
 	else if (button == GLFW_MOUSE_BUTTON_LEFT) {
+		global_cam.startControl();
 		tb_tracking = true;
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
 		handle_tracking = true;
 	}
-
 	if (action == GLFW_RELEASE) {
 		zoom_tracking = false;
 		tb_tracking = false;
@@ -158,43 +166,37 @@ void mouse( GLFWwindow* window, int button, int action, int mods )
 	}
 }
 
-void motion( GLFWwindow* window, double x, double y )
+void motion( GLFWwindow* window, double x, double y ) // y : down , x : right
 {
-	static dvec2 padding_past(x, y);
-	float dx = float(x - padding_past.x);
-	float dy = float(y - padding_past.y);
+	static dvec2 prev_coord(x, y);
+	float dx = float(x - prev_coord.x);
+	float dy = float(y - prev_coord.y);
 	if (tb_tracking) {
 		float s = 0.002f; // sensitivity
-		if (mouse_lock == NONE || abs(dy/dx) >10 || abs(dx/dy) >10 ) {
-			if (abs(dy) > abs(dx)) {
-				mouse_lock = Y_AXIS;
-			}
-			else {
-				mouse_lock = X_AXIS;
-			}
-		}
-		if(mouse_lock == Y_AXIS)
-			cam.trackBallMove(dy * s, 0);
-		else if(mouse_lock == X_AXIS)
-			cam.trackBallMove(0, dx*s);
+		global_cam.trackBallMove(-dx * s,-dy*s, 0);
 	}
 	if (handle_tracking) {
 		float s = 0.002f; // sensitivity
-		cam.trackBallMove(0,0,((dx>window_size.y/2)?dy:-dy)*s);
+		global_cam.trackBallMove(0,0,((dx>window_size.y/2)?dy:-dy)*s);
 	}
 	if (zoom_tracking) {
 		float ratio = 0.5f;
-		vec3 re = cam.eye - cam.at;
+		vec3 re = global_cam.eye - global_cam.at;
 		if (re.length() < 5.0f && dy< 0) {
 			// do nothing eye is too close to the object
 		}
 		else {
-			cam.zoomMove(float(dy*ratio));
+			global_cam.zoomMove(float(dy*ratio));
 		}
 	}
 	if (padding) {
-		float ratio = 0.5f* 0.001f * (cam.eye -cam.at).length();
-		cam.relativeMove(vec3(0,-dx,dy)*ratio);
+		float ratio = 0.5f* 0.001f * (global_cam.eye -global_cam.at).length();
+		global_cam.relativeMove(vec3(0,-dx,dy)*ratio);
 	}
-	padding_past = dvec2(x, y);
+	if (fps_mode) {
+		float s = 0.0002f; // sensitivity
+		global_cam.fpsMove(dx * s, 0);
+		global_cam.fpsMove(0, dy * s);
+	}
+	prev_coord = dvec2(x, y);
 }

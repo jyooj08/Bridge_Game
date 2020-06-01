@@ -3,7 +3,7 @@
 // sound objects
 irrklang::ISoundEngine* engine;
 irrklang::ISoundSource* mp3_src = nullptr;
-static const char* basic_mp3_path = "../bin/sounds/music.mp3";
+const char* basic_mp3_path = "../bin/sounds/music.mp3";
 
 bool init_sound() {
 	engine = irrklang::createIrrKlangDevice();
