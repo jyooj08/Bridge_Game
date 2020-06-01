@@ -7,7 +7,7 @@
 #include "camera.h"
 #include "myMesh.h"
 #include "callBackManager.h"
-#include "irrKlang/irrKlang.h"
+#include "sound.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -23,13 +23,6 @@ Basic3dObject* room;
 
 material_t	material;
 light_t		light;
-
-//*******************************************************************
-// sound objects
-irrklang::ISoundEngine* engine;
-irrklang::ISoundSource* wave_src = nullptr;
-irrklang::ISoundSource* mp3_src = nullptr;
-static const char* mp3_path = "../bin/sounds/music.mp3";
 
 //*************************************
 void update();
@@ -200,19 +193,14 @@ bool user_init()
 	});
 
 	// setup freetype text
-	init_text();
-
-	// set sound
-	engine = irrklang::createIrrKlangDevice();
-	if (!engine) return false;
-	mp3_src = engine->addSoundSourceFromFile(mp3_path);
-	mp3_src->setDefaultVolume(0.5f);
-	engine->play2D(mp3_src, true);
+	if (!init_text()) return false;
+	if (!init_sound()) return false;
+	play_sound();
 
 	return true;
 }
 
 void user_finalize()
 {
-	engine->drop();
+	finalize_sound();
 }

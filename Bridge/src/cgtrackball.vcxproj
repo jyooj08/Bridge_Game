@@ -62,6 +62,7 @@
     <ClCompile Include="god.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="render.cpp" />
+    <ClCompile Include="sound.cpp" />
     <ClCompile Include="text.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +79,7 @@
     <ClInclude Include="meshFactory.h" />
     <ClInclude Include="myMesh.h" />
     <ClInclude Include="render.h" />
+    <ClInclude Include="sound.h" />
     <ClInclude Include="trackball.h" />
   </ItemGroup>
   <ItemGroup>
