@@ -59,8 +59,11 @@
     <ClCompile Include="glBufferManager.cpp">
       <Filter>Source Files\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="sound.cpp">
+      <Filter>Source Files\Tools</Filter>
+    </ClCompile>
     <ClCompile Include="text.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,6 +107,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="glBufferManager.h">
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="sound.h">
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="text.h">
       <Filter>Header Files\Tools</Filter>
     </ClInclude>
   </ItemGroup>

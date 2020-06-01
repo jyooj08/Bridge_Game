@@ -1,5 +1,6 @@
 #include "global.h"
 #include "animator.h"
+#include "sound.h"
 
 //*************************************
 // global constants
@@ -89,6 +90,9 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 		}
 		else if (key == GLFW_KEY_R) {
 			rotate_mode = !rotate_mode;
+		}
+		else if (key == GLFW_KEY_SPACE) {
+			stop_sound();
 		}
 		else {
 			if (key == GLFW_KEY_W && cF == 0) 

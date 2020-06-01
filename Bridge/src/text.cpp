@@ -1,8 +1,7 @@
 #include "cgmath.h"	// slee's simple math library
 #include "cgut.h"	// slee's OpenGL utility
-#define STB_TRUETYPE_IMPLEMENTATION
+#include "text.h"
 #include "stb_truetype.h"
-
 // stb_truetype object
 stbtt_fontinfo font_info;
 
@@ -12,14 +11,6 @@ GLuint		program_text;	// GPU program for text render
 static const char*	font_path = "../bin/fonts/Fish Grill.otf";				// from Windows/font/
 static const char*	vert_text_path = "../bin/shaders/text.vert";		// text vertex shaders
 static const char*	frag_text_path = "../bin/shaders/text.frag";		// text fragment shaders
-
-struct stbtt_char_t
-{
-	GLuint	textureID;				// ID handle of the glyph texture
-	ivec2	size;					// Size of glyph
-	ivec2	bearing;				// Offset from baseline to left/top of glyph
-	GLuint	advance;				// Horizontal offset to advance to next glyph
-};
 
 std::map<GLchar, stbtt_char_t> stbtt_char_list;
 
