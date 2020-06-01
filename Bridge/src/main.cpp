@@ -12,6 +12,7 @@
 #include "text.h"
 #include "model.h"
 #include "logic.h"
+#include "MyText.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -35,14 +36,25 @@ light_t		light; // should be global!!
 
 //*************************************
 bool game_start = false;
+bool show_help = false;
 int stage = 0;
-string maps[3] = {
+string maps[5] = {
 	"UURRRUU",
 	"UUUURRUUULLLLUUUUR",
-	"UUUURRRUULLUURRUUUURRRDDDRRRUU"
+	"UUUURRRUULLLLUURRRUUUURRR",
+	"UUURRUULLUUUULLLDDDLLLUUUUUURRUUUUUUURRRDDDRRRUUUR"
+	"UULLLDDDDRRDDRRUUUURRRUUUULLLLUUUURRRUURRUURRRRDDDDDRRRUUUUURRUUUULLLUURRUUUUUULLR"
+	//"UUUU","UUUU","UUUU","UUUU","UUUU"
 };
-double time_delta[3] = { 1.0,0.6,0.4 };
+double time_delta[5] = { 0.7,0.4,0.3,0.3,0.2 };
 renderID mapID;
+
+MyText logo("Bridge Game", 25, 30, 1.5f, vec4(1, 1, 1, 1));
+MyText help("Press h to see help", 25, 50, 0.5f, vec4(1, 1, 1, 1));
+MyText enter("Press Enter to start game", 25, 55, 0.5f, vec4(1, 1, 1, 1));
+MyText gameover("Game Over", 25, 30, 1.5f, vec4(1, 1, 1, 1));
+MyText gameclear("Game clear", 25, 30, 1.5f, vec4(1, 1, 1, 1));
+renderID logoID, boxID, helpID, enterID;
 
 //*************************************
 void depth_map_fbo_setting();
@@ -50,6 +62,8 @@ void update();
 int gl_init();
 bool user_init();
 void user_finalize();
+bool game_init();
+bool game_finalize();
 
 int main( int argc, char* argv[] )
 {
@@ -60,19 +74,47 @@ int main( int argc, char* argv[] )
 	for( frame=0; !glfwWindowShouldClose(window); frame++ )
 	{
 		glfwPollEvents();	// polling and processing of events
-		if (!game_start) {
-			if (stage == 0) printf("Press Enter to start game\n");
-			else if (stage == -1) printf("Game Over\n");
-			else if (stage >= 3) printf("Congratulation!!!\n");
-			else printf("Stage %d\n", stage + 1);
-			continue;
-		}
-		// NOTICE : update() and animateAll();
-		// object which is ATTACHED on animated object should update position after animateAll() !!!
+
 		animateAll();
 		update();
+		renderAll();
 
-		renderAll();			// per-frame render
+		if (!game_start) {
+			if (stage == -1) {
+				put2render(&gameover);
+				game_finalize();
+			}
+			else if (stage == 0) {
+				/*if (show_help) {
+					detachRenderFunction(logoID);
+					detachRenderFunction(helpID);
+					helpContentID = put2render(&helpContent);
+				}
+				else {
+					detachRenderFunction(helpContentID);
+					logoID = put2render(&logo);
+					helpID = put2render(&help);
+				}*/
+			}
+			else if (stage >= 5) {
+				put2render(&gameclear);
+				game_finalize();
+			}
+			else {
+				game_start = true;
+				game_init();
+			}
+			continue;
+		}
+		
+		// NOTICE : update() and animateAll();
+		// object which is ATTACHED on animated object should update position after animateAll() !!!
+
+		// YJ's logic
+		render_logic();
+
+
+		//renderAll();			// per-frame render
 	}
 
 	// normal termination
@@ -109,6 +151,7 @@ void update()
 }
 bool game_finalize() {
 	detachRenderFunction(mapID);
+	detachRenderFunction(boxID);
 	delete bridgeMap;
 	return true;
 }
@@ -121,11 +164,11 @@ bool game_init() {
 	global_cam = camera();
 
 	bridgeMap = new BridgeMap(maps[stage]);
-	mapID = attachRenderFunction(bind(&BridgeMap::render, bridgeMap));
+	//mapID = attachRenderFunction(bind(&BridgeMap::render, bridgeMap));
 
 	box = generateBoxMesh(vec3(9));
 	box.setMaterial(_ruby);
-	put2render(&box);
+	//boxID = put2render(&box);
 
 	// light ball
 	lightBall.scale(10);
@@ -153,7 +196,8 @@ int gl_init() {
 	if(!(program=cg_create_program( vert_shader_path, frag_shader_path ))){ glfwTerminate(); return 1; }	// create and compile shaders/program
 	if(!(shadow_program=cg_create_program( shadow_vert_shader_path, shadow_frag_shader_path ))){ glfwTerminate(); return 1; }	// create and compile shaders/program
 	// init GL states
-	glClearColor( 39/255.0f, 40/255.0f, 34/255.0f, 1.0f );	// set clear color
+	//glClearColor( 135.0f/255.0f, 206.0f/255.0f, 235.0f/255.0f, 1.0f );	// set clear color
+	glClearColor(1, 0, 0, 1);
 	glEnable( GL_CULL_FACE );								// turn on backface culling
 	glEnable( GL_DEPTH_TEST );								// turn on depth tests
 	glEnable(GL_TEXTURE_2D);
@@ -177,14 +221,14 @@ bool user_init()
 	// log hotkeys
 	print_help();
 
-	game_init();
+	//game_init();
 
 	// generate 3dObjects *********************
 	sphereMesh = generateSphereMesh();
 	//bridgeMap = new BridgeMap();
 
 	// generate director mesh
-	Mesh* x = generateBoxMesh(vec3(10,0.5,0.5));
+	/*Mesh* x = generateBoxMesh(vec3(10,0.5,0.5));
 	Mesh* y = generateBoxMesh(vec3(0.5,10,0.5));
 	Mesh* z = generateBoxMesh(vec3(0.5,0.5,10));
 	directorMesh = mergeMesh(mergeMesh(x, y),z);
@@ -193,13 +237,19 @@ bool user_init()
 			mat4::scale((global_cam.at - global_cam.eye).length()/200);
 		applyModelMatrix(model_matrix);
 		directorMesh->render();});
-
+		*/
 	
 	// ground 
-	static Basic3dObject ground(generateBoxMesh(vec3(100,2,100)));
+	//static Basic3dObject ground(generateBoxMesh(vec3(100,2,100)));
+	//ground.setOrigin(50, 1, 50);
+	//ground.setPosition(0, -10, 0);
+	//ground.scale(10);
+		// ground 
+	static Basic3dObject ground(generateBoxMesh(vec3(10000, 2, 10000)));
 	ground.setOrigin(50, 1, 50);
-	ground.setPosition(0, -10, 0);
+	ground.setPosition(0, -40, 0);
 	ground.scale(10);
+
 
 	// register functions ***********************
 
@@ -254,6 +304,9 @@ bool user_init()
 
 	if (!init_model()) return false;
 
+	logoID = put2render(&logo);
+	helpID = put2render(&help);
+	enterID = put2render(&enter);
 	return true;
 }
 

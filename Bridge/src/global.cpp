@@ -2,6 +2,9 @@
 #include "animator.h"
 #include "3dObject.h"
 #include "logic.h"
+#include "text.h"
+#include "render.h"
+#include "BridgeMap.h"
 
 //*************************************
 // global constants
@@ -37,11 +40,23 @@ uint color_mode = 0;
 bool rotate_mode = false;
 extern Basic3dObject box;
 extern Basic3dObject lightBall;
+extern BridgeMap* bridgeMap;
 extern bool game_start;
 extern int stage;
+extern bool show_help;
 
 bool game_init();
 bool game_finalize();
+extern renderID logoID, helpID, enterID;
+extern MyText logo, help, enter;
+renderID helpContentID[4];
+MyText helpContent[] = {
+	MyText("The purpose of this game is for the ruby box to cross the bridge to the end.",10, 20, 0.4f, vec4(1, 1, 1, 1)),
+	MyText("The left and right arrow keys can be used to change the direction of the box,",10, 30, 0.4f, vec4(1, 1, 1, 1)),
+	MyText(" and the box does not stop until it reaches the end of the bridge.",10, 40, 0.4f, vec4(1, 1, 1, 1)),
+	MyText("Complete 5 stages to clear the game.Good luck!",10, 50, 0.4f, vec4(1, 1, 1, 1))
+};
+
 
 //************************************ 
 // simple functions
@@ -82,7 +97,7 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 	if(action==GLFW_PRESS)
 	{
 		if(key==GLFW_KEY_ESCAPE||key==GLFW_KEY_Q)	glfwSetWindowShouldClose( window, GL_TRUE );
-		else if(key==GLFW_KEY_H||key==GLFW_KEY_F1)	print_help();
+		//else if(key==GLFW_KEY_H||key==GLFW_KEY_F1)	print_help();
 		else if(key==GLFW_KEY_HOME)					global_cam=camera();
 		else if (key == GLFW_KEY_C) {
 			color_mode++;
@@ -112,18 +127,39 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 		}
 		else if (key == GLFW_KEY_RIGHT) {
 			turn_right();
-			global_cam.turn_right();
-			lightBall.rotate(vec3(0, 1, 0), -90);
+			//lightBall.rotate(vec3(0, 1, 0), -90);
 		}
 		else if (key == GLFW_KEY_LEFT) {
 			turn_left();
-			global_cam.turn_left();
-			lightBall.rotate(vec3(0, 1, 0), 90);
+			//lightBall.rotate(vec3(0, 1, 0), 90);
 		}
 		else if (key == GLFW_KEY_ENTER) {
-			if (!game_start && stage >= 0) {
+			if (!game_start && stage >= 5) {
+				game_finalize();
+			}
+			else if (!game_start && stage >= 0) {
 				game_start = true;
+				if (stage == 0) {
+					detachRenderFunction(logoID);
+					detachRenderFunction(helpID);
+					detachRenderFunction(enterID);
+				}
 				game_init();
+			}
+		}
+		else if (key == GLFW_KEY_H) {
+			show_help = !show_help;
+			if (show_help && stage == 0) {
+				detachRenderFunction(logoID);
+				detachRenderFunction(helpID);
+				detachRenderFunction(enterID);
+				for(int i=0;i<4;i++) helpContentID[i] = put2render(&helpContent[i]);
+			}
+			else if(!show_help && stage==0){
+				for (int i = 0; i < 4;i++) detachRenderFunction(helpContentID[i]);
+				logoID = put2render(&logo);
+				helpID = put2render(&help);
+				enterID = put2render(&enter);
 			}
 		}
 		else {

@@ -3,8 +3,9 @@
 #include <functional>
 #include "global.h"
 #include "3dObject.h"
+#include "MyText.h"
 
-using namespace std; 
+using namespace std;
 
 extern  unsigned int SHADOW_WIDTH;
 extern  unsigned int SHADOW_HEIGHT;
@@ -25,10 +26,11 @@ struct light_t
 
 struct render_function {
 	render_function_t function;
+	bool is_text = false;
 	bool is_able = true;
 	bool light_blocking = true;
 	bool light_effect = true;
-	render_function(render_function_t f,bool lb = true,bool le = true) {
+	render_function(render_function_t f, bool lb = true, bool le = true) {
 		function = f; light_blocking = lb, light_effect = le;
 	}
 	bool excute() {
@@ -42,18 +44,22 @@ struct render_function {
 	void disableLightBlocking() { light_blocking = false; }
 	void enableLightEffect() { light_effect = true; }
 	void disableLightEffect() { light_effect = false; }
-	bool isAble()	{ return is_able; }
-	void disable()	{ is_able = false; }
-	void enable()	{ is_able = true; }
+	bool isAble() { return is_able; }
+	void disable() { is_able = false; }
+	void enable() { is_able = true; }
+	bool isText() { return is_text; }
 };
 
 
 void pushRenderFunction(render_function_t);
-renderID attachRenderFunction(render_function_t render_function,bool light_blocking = true);
-renderID put2render(Basic3dObject* obj,bool light_blocking=true);
+renderID attachRenderFunction(render_function_t render_function, bool light_blocking = true);
+renderID attachTextRenderFunction(render_function_t render_function);
+renderID put2render(Basic3dObject* obj, bool light_blocking = true);
+renderID put2render(MyText* text);
+
 void detachRenderFunction(renderID& renderID);
 
-void renderAll(GLuint ID=program);
+void renderAll(GLuint ID = program);
 
 void enableLightBlocking(renderID id);
 void disableLightBlocking(renderID id);
