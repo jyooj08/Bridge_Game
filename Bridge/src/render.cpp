@@ -6,11 +6,9 @@
 #include <vector>
 #include <iostream>
 #include "global.h"
+#include "text.h"
 
 using namespace std;
-
-// in text.cpp
-void render_text(std::string text, GLint x, GLint y, GLfloat scale, vec4 color, GLfloat dpi_scale = 1.0f);
 
 
 queue<render_function_t> _renderQ;

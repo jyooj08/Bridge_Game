@@ -80,6 +80,7 @@
     <ClInclude Include="myMesh.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="sound.h" />
+    <ClInclude Include="text.h" />
     <ClInclude Include="trackball.h" />
   </ItemGroup>
   <ItemGroup>

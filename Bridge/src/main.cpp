@@ -8,6 +8,7 @@
 #include "myMesh.h"
 #include "callBackManager.h"
 #include "sound.h"
+#include "text.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -29,7 +30,6 @@ void update();
 int gl_init();
 bool user_init();
 void user_finalize();
-bool init_text(); // in text.cpp
 
 int main( int argc, char* argv[] )
 {
