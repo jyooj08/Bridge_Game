@@ -4,18 +4,25 @@
 
 char direction[4] = { 'U','R','D','L' };
 int di = 0, mi = 0;
-int game_mode = 0; // 0: before start, 1: during game, 2: win game, 3: lose game
+extern bool game_start;
+extern int stage;
+int mode = 0;
 string game_map;
 int map_len;
 double last_time, now;
+double time_delta;
 
 extern Basic3dObject box;
 extern Basic3dObject lightBall;
 extern camera global_cam;
 
-void init_logic(string m) {
+void init_logic(string m, double t) {
 	game_map = m;
 	map_len = game_map.length();
+	time_delta = t;
+	mode = 0;
+	di = 0;
+	mi = 0;
 }
 
 
@@ -23,8 +30,7 @@ void start_game() {
 	// logic setting
 	last_time = glfwGetTime();
 	cout << "map: " << game_map << endl;
-	cout << "TIME_DELTA: " << TIME_DELTA << "s" << endl << endl;
-	game_mode = 1;
+	cout << "TIME_DELTA: " << time_delta << "s" << endl << endl;
 }
 
 void turn_right() {
@@ -41,24 +47,26 @@ void turn_left() {
 }
 
 void render_logic () {
-	if (game_mode == 0) return;
-	if (game_mode == 2) {
+	if (!game_start) return;
+	if (mode == 1) {
 		cout << "\nWIN GAME\n";
 		//render_text("WIN GAME", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), 1);
-		//game_mode = 0;
+		stage += 1;
+		game_start = false;
 		return;
 	}
-	if (game_mode == 3) {
+	if (mode == 2) {
 		cout << "\nLOSE GAME\n";
 		//box2.translate(vec3(0, -10, 0));
 		//render_text("LOSE GAME", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), 1);
-		//game_mode = 0;
+		stage = -1;
+		game_start = false;
 		return;
 	}
 
 	now = glfwGetTime();
-	if (mi == map_len - 1) game_mode = 2;
-	else if (mi < map_len - 1 && now - last_time >= TIME_DELTA) {
+	if (mi == map_len - 1) mode = 1;
+	else if (mi < map_len - 1 && now - last_time >= time_delta) {
 		//move
 		switch (direction[di]) {
 		case 'U':
@@ -85,7 +93,7 @@ void render_logic () {
 			break;
 		}
 		cout << "current_move: " << direction[di] << " current_map:" << game_map[mi] << endl;
-		if (game_map[mi] != direction[di]) game_mode = 3;
+		if (game_map[mi] != direction[di]) mode = 2;
 		mi++;
 		last_time = now;
 	}

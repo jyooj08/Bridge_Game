@@ -136,6 +136,7 @@ void renderAll(GLuint ID) {
 	}
 
 	render_logic();
+
 	glfwSwapBuffers(window);
 }
 

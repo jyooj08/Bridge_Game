@@ -38,6 +38,10 @@ bool rotate_mode = false;
 extern Basic3dObject box;
 extern Basic3dObject lightBall;
 extern bool game_start;
+extern int stage;
+
+bool game_init();
+bool game_finalize();
 
 //************************************ 
 // simple functions
@@ -117,7 +121,10 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 			lightBall.rotate(vec3(0, 1, 0), 90);
 		}
 		else if (key == GLFW_KEY_ENTER) {
-			game_start = !game_start;
+			if (!game_start && stage >= 0) {
+				game_start = true;
+				game_init();
+			}
 		}
 		else {
 			if (key == GLFW_KEY_W && cF == 0) 
