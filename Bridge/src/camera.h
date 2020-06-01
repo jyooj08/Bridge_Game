@@ -10,6 +10,16 @@ typedef struct camera
 	vec3	at = vec3( 0, 0, 0 );
 	vec3	up = vec3( 0, 1,0 );
 	mat4	view_matrix = mat4::look_at( eye, at, up );
+
+	vec3 direction[4] = {
+		vec3(0,100,100),
+		vec3(-100,100,0),
+		vec3(0,100,-100),
+		vec3(100,100,0)
+	};
+	int di = 0;
+	vec3 moving = vec3(0, 0, 0);
+
 	void update() {
 		//aspect = window_size.x/float(window_size.y);
 		up = (at-eye).cross( up.cross(at - eye));
@@ -59,6 +69,17 @@ typedef struct camera
 	void basicMove(vec3 d) {
 		eye += d;
 		at += d;
+		moving += d;
+	}
+	void turn_right() {
+		di++;
+		if (di > 3) di = 0;
+		eye = direction[di] + moving;
+	}
+	void turn_left() {
+		di--;
+		if (di < 0) di = 3;
+		eye = direction[di] + moving;
 	}
 	void zoomMove(float d) {
 		eye += (eye - at).normalize() * d;

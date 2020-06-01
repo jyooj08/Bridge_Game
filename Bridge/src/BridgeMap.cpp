@@ -5,7 +5,7 @@
 
 BridgeMap::BridgeMap() {
 	// sample path // TODO : delete sample
-	Tile sample_path[] = "UURRRURRRLRLRLRUUUUURRRURRRURLRURLRULRULRURLRURLRLRUUURRRUDDDDDURURURLDURRRDD";
+	Tile sample_path[] = "UURRRUUUURR";
 	for (auto t : sample_path) {
 		if (t == '\0') break;
 		path.push_back(t);

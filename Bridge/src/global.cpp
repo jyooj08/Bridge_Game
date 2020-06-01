@@ -1,6 +1,7 @@
 #include "global.h"
 #include "animator.h"
 #include "3dObject.h"
+#include "logic.h"
 
 //*************************************
 // global constants
@@ -104,7 +105,7 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			}
 		}
-		else if (key == GLFW_KEY_UP) {
+		/*else if (key == GLFW_KEY_UP) {
 			box2.translate(vec3(0, 0, -10));
 			lightBall.translate(vec3(0, 0, -10));
 			global_cam.basicMove(vec3(0, 0, -10));
@@ -123,6 +124,14 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 			box2.translate(vec3(-10, 0, 0));
 			lightBall.translate(vec3(-10, 0, 0));
 			global_cam.basicMove(vec3(-10, 0, 0));
+		}*/
+		else if (key == GLFW_KEY_RIGHT) {
+			turn_right();
+			global_cam.turn_right();
+		}
+		else if (key == GLFW_KEY_LEFT) {
+			turn_left();
+			global_cam.turn_left();
 		}
 		else {
 			if (key == GLFW_KEY_W && cF == 0) 
