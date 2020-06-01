@@ -11,6 +11,7 @@
 #include "sound.h"
 #include "text.h"
 #include "model.h"
+#include "logic.h"
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -43,6 +44,7 @@ int main( int argc, char* argv[] )
 {
 	gl_init();
 	user_init();
+	start_game();
 	// enters rendering/event loop
 	for( frame=0; !glfwWindowShouldClose(window); frame++ )
 	{
@@ -231,6 +233,8 @@ bool user_init()
 	if (!init_text()) return false;
 
 	if (!init_model()) return false;
+
+	init_logic("UURRRUUUURR");
 
 	return true;
 }

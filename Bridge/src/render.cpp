@@ -8,6 +8,7 @@
 #include <functional>
 #include "global.h"
 #include "model.h"
+#include "logic.h"
 
 using namespace std;
 
@@ -113,8 +114,8 @@ void renderAll(GLuint ID) {
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	// render texts
-	float dpi_scale = cg_get_dpi_scale();
-	render_text("Sample text", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), dpi_scale);
+	//float dpi_scale = cg_get_dpi_scale();
+	//render_text("Sample text", 100, 100, 1.0f, vec4(0.5f, 0.8f, 0.2f, 1.0f), dpi_scale);
 
 	glUseProgram( ID );
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
@@ -123,7 +124,6 @@ void renderAll(GLuint ID) {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 	
-	//render_model();
 
 	GLint uloc = glGetUniformLocation(ID, "lightSpaceMatrix");
 	if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, lightSpaceMatrix);
@@ -135,8 +135,7 @@ void renderAll(GLuint ID) {
 		p.second.excute();
 	}
 
-	//render_model();
-
+	render_logic();
 	glfwSwapBuffers(window);
 }
 

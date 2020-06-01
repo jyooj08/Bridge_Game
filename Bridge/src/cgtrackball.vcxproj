@@ -62,6 +62,7 @@
     <ClCompile Include="global.cpp" />
     <ClCompile Include="gl\glad\glad.c" />
     <ClCompile Include="god.cpp" />
+    <ClCompile Include="logic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="render.cpp" />
@@ -81,6 +82,7 @@
     <ClInclude Include="glBufferManager.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="god.h" />
+    <ClInclude Include="logic.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="meshFactory.h" />
     <ClInclude Include="model.h" />
