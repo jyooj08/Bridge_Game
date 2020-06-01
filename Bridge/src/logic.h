@@ -3,7 +3,7 @@
 #include"cgut.h"
 #include<iostream>
 using namespace std;
-#define TIME_DELTA 0.5
+#define TIME_DELTA 1
 
 void init_logic(string m);
 void start_game();

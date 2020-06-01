@@ -128,10 +128,12 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 		else if (key == GLFW_KEY_RIGHT) {
 			turn_right();
 			global_cam.turn_right();
+			lightBall.rotate(vec3(0, 1, 0), -90);
 		}
 		else if (key == GLFW_KEY_LEFT) {
 			turn_left();
 			global_cam.turn_left();
+			lightBall.rotate(vec3(0, 1, 0), 90);
 		}
 		else {
 			if (key == GLFW_KEY_W && cF == 0) 
