@@ -43,6 +43,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>gl;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -55,12 +56,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="animator.cpp" />
+    <ClCompile Include="assimp_loader.cpp" />
     <ClCompile Include="BridgeMap.cpp" />
     <ClCompile Include="glBufferManager.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="gl\glad\glad.c" />
     <ClCompile Include="god.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="render.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="text.cpp" />
@@ -68,6 +71,7 @@
   <ItemGroup>
     <ClInclude Include="3dObject.h" />
     <ClInclude Include="animator.h" />
+    <ClInclude Include="assimp_loader.h" />
     <ClInclude Include="BridgeMap.h" />
     <ClInclude Include="callBackManager.h" />
     <ClInclude Include="camera.h" />
@@ -79,6 +83,7 @@
     <ClInclude Include="god.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="meshFactory.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="myMesh.h" />
     <ClInclude Include="render.h" />
     <ClInclude Include="sound.h" />
@@ -90,6 +95,8 @@
     <None Include="..\bin\shaders\game.vert">
       <FileType>Document</FileType>
     </None>
+    <None Include="..\bin\shaders\model.frag" />
+    <None Include="..\bin\shaders\model.vert" />
     <None Include="..\bin\shaders\shadow_depth.frag" />
     <None Include="..\bin\shaders\shadow_depth.vert" />
   </ItemGroup>
