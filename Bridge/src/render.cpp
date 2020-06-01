@@ -7,6 +7,7 @@
 #include <iostream>
 #include <functional>
 #include "global.h"
+#include "model.h"
 
 using namespace std;
 
@@ -118,9 +119,13 @@ void renderAll(GLuint ID) {
 	glUseProgram( ID );
 	glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
 	glBindVertexArray(vertex_array);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, depthMap);
-	GLint uloc = glGetUniformLocation(program, "lightSpaceMatrix");
+	
+	//render_model();
+
+	GLint uloc = glGetUniformLocation(ID, "lightSpaceMatrix");
 	if (uloc > -1) glUniformMatrix4fv(uloc, 1, GL_TRUE, lightSpaceMatrix);
 	while (!_renderQ.empty()) {
 		render_function_t f = _renderQ.front(); _renderQ.pop();
@@ -129,6 +134,9 @@ void renderAll(GLuint ID) {
 	for (auto& p : _renderSet) {
 		p.second.excute();
 	}
+
+	//render_model();
+
 	glfwSwapBuffers(window);
 }
 

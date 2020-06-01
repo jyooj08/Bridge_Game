@@ -10,10 +10,14 @@
 #include "material.h"
 #include "sound.h"
 #include "text.h"
+#include "model.h"
 #include <vector>
 #include <iostream>
 using namespace std;
 #pragma comment(lib, "irrKlang/irrKlang.lib")
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 //*************************************
 // test objects
@@ -23,6 +27,8 @@ BridgeMap* bridgeMap;
 Mesh* directorMesh;
 
 Basic3dObject* room;
+Basic3dObject box2(generateBoxMesh(vec3(9)));
+Basic3dObject lightBall(generateSphereMesh());
 
 light_t		light; // should be global!!
 
@@ -102,7 +108,7 @@ int gl_init() {
 	glClearColor( 39/255.0f, 40/255.0f, 34/255.0f, 1.0f );	// set clear color
 	glEnable( GL_CULL_FACE );								// turn on backface culling
 	glEnable( GL_DEPTH_TEST );								// turn on depth tests
-	
+	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	
@@ -124,7 +130,6 @@ bool user_init()
 	print_help();
 
 
-
 	// generate 3dObjects *********************
 	sphereMesh = generateSphereMesh();
 	bridgeMap = new BridgeMap();
@@ -143,19 +148,20 @@ bool user_init()
 
 	// box
 	static Basic3dObject box(generateBoxMesh(vec3(10)));
-	static Basic3dObject box2(generateBoxMesh(vec3(10)));
 	box.setOrigin(5, 5, 5);
 	box.rotate(vec3(1, 0, 0), PI / 4,true);
 	box.rotate(vec3(0, 0, 1), PI / 4,true);
 	box.setPosition(-20, sqrt(10*10*3.0f)/2, -20);
 	//box.setPosition(0, 10, 0);
+	box2.setMaterial(_ruby);
+	//box2.setOrigin(5, 5, 5);
 
 	// ball
 	static Basic3dObject ball(generateSphereMesh(vec3(10)));
 	ball.setPosition(5, 10, 20);
 	ball.translate(vec3(0, 10, 0) );
 	ball.rotate(0, 1, 0, float(PI/4));
-
+	
 	// ground 
 	static Basic3dObject ground(generateBoxMesh(vec3(100,2,100)));
 	ground.setOrigin(50, 1, 50);
@@ -163,9 +169,8 @@ bool user_init()
 	ground.scale(10);
 	
 	// light ball
-	static Basic3dObject lightBall(generateSphereMesh());
 	lightBall.scale(10);
-	lightBall.setPosition(-200, 100, -200);
+	lightBall.setPosition(0, 200, 200);
 	lightBall.getMesh()->flipNormal();
 
 	// register functions ***********************
@@ -194,13 +199,13 @@ bool user_init()
 
 	// light ball movement
 	attachAnimator([](double t) {
-		lightBall.rotate(0, 2, 0, float(t));
+		//lightBall.rotate(0, 2, 0, float(t));
 		light.position = vec4(lightBall.getPosition(),1);
 	});
 	// box movement
 
 	attachAnimator([](double t) {
-		box.rotate(vec3(0,1,0), float(t),true);
+		//box.rotate(vec3(0,1,0), float(t),true);
 		//box.rotate(0,1,0, float(t));
 		ball.rotate(0, 1, 0, float(t));
 		//ball.translate(vec3(0, 10, 0) );
@@ -221,15 +226,19 @@ bool user_init()
 	*/
 
 	if (!init_sound()) return false;
-	play_sound();
+	//play_sound();
 
-	init_text();
+	if (!init_text()) return false;
+
+	if (!init_model()) return false;
 
 	return true;
 }
 
 void user_finalize()
 {
+	finalize_sound();
+	finalize_model();
 }
 void depth_map_fbo_setting() {
 	// source : learnopengl.com

@@ -71,6 +71,12 @@
     <ClCompile Include="text.cpp">
       <Filter>Source Files\Tools</Filter>
     </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Source Files\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="assimp_loader.cpp">
+      <Filter>Source Files\Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global.h">
@@ -127,6 +133,12 @@
     <ClInclude Include="text.h">
       <Filter>Header Files\Tools</Filter>
     </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Header Files\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="assimp_loader.h">
+      <Filter>Header Files\Tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\shaders\game.frag">
@@ -139,6 +151,12 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="..\bin\shaders\shadow_depth.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\bin\shaders\model.frag">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\bin\shaders\model.vert">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

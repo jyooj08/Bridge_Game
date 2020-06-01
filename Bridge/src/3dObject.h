@@ -47,6 +47,7 @@ public:
 
 	void render(float padding = -0.0f) {
 		glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, index_buffer);
 		applyModelMatrix(getModelMatrix(padding));
 		applyMaterial(material);
 		mesh->render();
