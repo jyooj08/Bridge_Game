@@ -33,6 +33,12 @@
     <Filter Include="Header Files\Tools">
       <UniqueIdentifier>{f126d17c-cda1-479b-bfd5-f2fdc33dc3ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\3D">
+      <UniqueIdentifier>{c0f52837-c1bf-4414-8175-721373c13794}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\3D">
+      <UniqueIdentifier>{7c87d131-3c73-48f2-a213-eac08d0b2063}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -88,17 +94,11 @@
     <ClInclude Include="cgmath.h">
       <Filter>External Libraries</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>Header Files\Tools</Filter>
-    </ClInclude>
     <ClInclude Include="god.h">
       <Filter>Header Files\Executor</Filter>
     </ClInclude>
     <ClInclude Include="meshFactory.h">
       <Filter>Header Files\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="myMesh.h">
-      <Filter>Header Files\Tools</Filter>
     </ClInclude>
     <ClInclude Include="3dObject.h">
       <Filter>Header Files\GameObjects</Filter>
@@ -108,6 +108,18 @@
     </ClInclude>
     <ClInclude Include="glBufferManager.h">
       <Filter>Header Files\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="myMesh.h">
+      <Filter>Header Files\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="material.h">
+      <Filter>Header Files\3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Creature.h">
+      <Filter>Header Files\GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="sound.h">
       <Filter>Header Files\Tools</Filter>
@@ -121,6 +133,12 @@
       <Filter>Shader Files</Filter>
     </None>
     <None Include="..\bin\shaders\game.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\bin\shaders\shadow_depth.vert">
+      <Filter>Shader Files</Filter>
+    </None>
+    <None Include="..\bin\shaders\shadow_depth.frag">
       <Filter>Shader Files</Filter>
     </None>
   </ItemGroup>

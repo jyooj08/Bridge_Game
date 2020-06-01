@@ -5,19 +5,31 @@
 
 //typedef struct myMesh myMesh;
 
-struct myMesh {
+struct Mesh {
 	glChunk* vertexChunk = NULL;
 	glChunk* indexChunk = NULL;
 	vector<vertex> vertices;
 	vector<uint> indices;
 	GLuint texture = 0;
 	bool update_flag = false; // check inital udpate
-	myMesh(GLsizeiptr vertexSize = 0, GLsizeiptr indexSize = 0) {
+	bool auto_free = false;
+	Mesh(GLsizeiptr vertexSize = 0, GLsizeiptr indexSize = 0) {
 		vertexSize *= sizeof(vertex);
 		indexSize *= sizeof(uint);
 		if (vertexSize > 0 || indexSize > 0) {
 			vertexChunk = newVertexChunk(vertexSize);
 			indexChunk = newIndexChunk(indexSize);
+		}
+	}
+	~Mesh() {
+		if (auto_free) {
+			// TODO free chunk
+		}
+		if (vertexChunk != NULL) {
+			cout << "vertexChunk[" << vertexChunk << "]is not free!" << endl;
+		}
+		if (vertexChunk != NULL) {
+			cout << "indexChunk[" << indexChunk << "]is not free!" << endl;
 		}
 	}
 	void genChunk() {
@@ -60,20 +72,10 @@ struct myMesh {
 	// convenient functions
 	void paint(float r = 0.0f, float g = 0.0f, float b = 0.0f, float a = 1.0f) {
 		paint(vec4(r, g, b, a)); }
-
-	void gPaint(float r = 0.0f, float g = 0.0f, float b = 0.0f,float c = 0.5f) {
-		float d = 0.5f / vertices.size();
-		float o = 0;
-		for (auto& v : vertices) {
-			if (o > c && d > 0.0f) d = -d;
-			v.norm = vec3(r+o,g+o,b+o);
-			o += d;
-		}
-	}
 };
 
-inline myMesh* mergeMesh(myMesh* ma, myMesh* mb) {
-	myMesh* newMesh = new myMesh();
+inline Mesh* mergeMesh(Mesh* ma, Mesh* mb) {
+	Mesh* newMesh = new Mesh();
 	newMesh->vertices = ma->vertices;
 	newMesh->vertices.insert(newMesh->vertices.end(),mb->vertices.begin(), mb->vertices.end());
 	newMesh->indices = ma->indices;
@@ -83,7 +85,7 @@ inline myMesh* mergeMesh(myMesh* ma, myMesh* mb) {
 	return newMesh;
 }
 
-inline void paintMesh(myMesh* m, vec4 color) {
+inline void paintMesh(Mesh* m, vec4 color) {
 	for (auto& v : m->vertices) {
 		v.tex = vec2(color.x, color.y);
 	}

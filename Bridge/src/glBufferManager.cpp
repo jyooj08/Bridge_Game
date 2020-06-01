@@ -6,6 +6,7 @@
 // OpenGL objects
 
 GLuint	program	= 0;	// ID holder for GPU program
+GLuint  shadow_program = 0;
 GLuint vertex_buffer = 0;
 GLuint index_buffer = 0;
 GLuint vertex_array = 0;
