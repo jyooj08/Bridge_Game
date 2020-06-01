@@ -28,10 +28,21 @@ BridgeMap* bridgeMap;
 Mesh* directorMesh;
 
 Basic3dObject* room;
-Basic3dObject box2(generateBoxMesh(vec3(9)));
+Basic3dObject box;
 Basic3dObject lightBall(generateSphereMesh());
 
 light_t		light; // should be global!!
+
+//*************************************
+bool game_start = false;
+int stage = 0;
+string maps[3] = {
+	"UURRRUU",
+	"UUUURRUUULLLLUUUUR",
+	"UUUURRRUULLUURRUUUURRRDDDRRRUU"
+};
+double time_delta[3] = { 1.0,0.6,0.4 };
+renderID mapID;
 
 //*************************************
 void depth_map_fbo_setting();
@@ -44,12 +55,18 @@ int main( int argc, char* argv[] )
 {
 	gl_init();
 	user_init();
-	start_game();
+	//start_game();
 	// enters rendering/event loop
 	for( frame=0; !glfwWindowShouldClose(window); frame++ )
 	{
 		glfwPollEvents();	// polling and processing of events
-
+		if (!game_start) {
+			if (stage == 0) printf("Press Enter to start game\n");
+			else if (stage == -1) printf("Game Over\n");
+			else if (stage >= 3) printf("Congratulation!!!\n");
+			else printf("Stage %d\n", stage + 1);
+			continue;
+		}
 		// NOTICE : update() and animateAll();
 		// object which is ATTACHED on animated object should update position after animateAll() !!!
 		animateAll();
@@ -89,6 +106,35 @@ void update()
 	//glUniform1i(glGetUniformLocation(program, "mode"), mode);
 
 	applyCamera(global_cam);
+}
+bool game_finalize() {
+	detachRenderFunction(mapID);
+	delete bridgeMap;
+	return true;
+}
+
+bool game_init() {
+	printf("start game init\n");
+	game_finalize();
+	init_logic(maps[stage], time_delta[stage]);
+
+	global_cam = camera();
+
+	bridgeMap = new BridgeMap(maps[stage]);
+	mapID = attachRenderFunction(bind(&BridgeMap::render, bridgeMap));
+
+	box = generateBoxMesh(vec3(9));
+	box.setMaterial(_ruby);
+	put2render(&box);
+
+	// light ball
+	lightBall.scale(10);
+	lightBall.setPosition(0, 200, 200);
+	lightBall.getMesh()->flipNormal();
+
+	start_game();
+	printf("end game init\n");
+	return true;
 }
 
 int gl_init() {
@@ -131,10 +177,11 @@ bool user_init()
 	// log hotkeys
 	print_help();
 
+	game_init();
 
 	// generate 3dObjects *********************
 	sphereMesh = generateSphereMesh();
-	bridgeMap = new BridgeMap();
+	//bridgeMap = new BridgeMap();
 
 	// generate director mesh
 	Mesh* x = generateBoxMesh(vec3(10,0.5,0.5));
@@ -147,33 +194,12 @@ bool user_init()
 		applyModelMatrix(model_matrix);
 		directorMesh->render();});
 
-
-	// box
-	static Basic3dObject box(generateBoxMesh(vec3(10)));
-	box.setOrigin(5, 5, 5);
-	box.rotate(vec3(1, 0, 0), PI / 4,true);
-	box.rotate(vec3(0, 0, 1), PI / 4,true);
-	box.setPosition(-20, sqrt(10*10*3.0f)/2, -20);
-	//box.setPosition(0, 10, 0);
-	box2.setMaterial(_ruby);
-	//box2.setOrigin(5, 5, 5);
-
-	// ball
-	static Basic3dObject ball(generateSphereMesh(vec3(10)));
-	ball.setPosition(5, 10, 20);
-	ball.translate(vec3(0, 10, 0) );
-	ball.rotate(0, 1, 0, float(PI/4));
 	
 	// ground 
 	static Basic3dObject ground(generateBoxMesh(vec3(100,2,100)));
 	ground.setOrigin(50, 1, 50);
 	ground.setPosition(0, -10, 0);
 	ground.scale(10);
-	
-	// light ball
-	lightBall.scale(10);
-	lightBall.setPosition(0, 200, 200);
-	lightBall.getMesh()->flipNormal();
 
 	// register functions ***********************
 
@@ -184,24 +210,19 @@ bool user_init()
 	glfwSetCursorPosCallback( window, motion );		// callback for mouse movement
 
 	// render 
-	attachRenderFunction(bind(&BridgeMap::render, bridgeMap));	// bridge map
+	//attachRenderFunction(bind(&BridgeMap::render, bridgeMap));	// bridge map
 	//renderID lightBallRenderID = attachRenderFunction([]() { lightBall.render(); });			// light box
 	//disableLightBlocking(lightBallRenderID);
 	renderID lightBallID = put2render(&lightBall);
 	disableLightBlocking(lightBallID);
 	disableLightEffect(lightBallID);
 	put2render(&ground);
-	put2render(&box);
-	put2render(&box2);
-	put2render(&ball);
+	//put2render(&box);
 
 	// animation 
 
-	//attachAnimator([](double t) {bridgeMap->animate(t); },1); // birdge map animation
-
 	// light ball movement
 	attachAnimator([](double t) {
-		//lightBall.rotate(0, 2, 0, float(t));
 		light.position = vec4(lightBall.getPosition(),1);
 	});
 	// box movement
@@ -209,7 +230,6 @@ bool user_init()
 	attachAnimator([](double t) {
 		//box.rotate(vec3(0,1,0), float(t),true);
 		//box.rotate(0,1,0, float(t));
-		ball.rotate(0, 1, 0, float(t));
 		//ball.translate(vec3(0, 10, 0) );
 	});
 
@@ -234,8 +254,6 @@ bool user_init()
 
 	if (!init_model()) return false;
 
-	init_logic("UURRRUUUURR");
-
 	return true;
 }
 
@@ -244,6 +262,7 @@ void user_finalize()
 	finalize_sound();
 	finalize_model();
 }
+
 void depth_map_fbo_setting() {
 	// source : learnopengl.com
 	// configure depth map FBO

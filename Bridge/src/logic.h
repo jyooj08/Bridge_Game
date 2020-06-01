@@ -3,9 +3,8 @@
 #include"cgut.h"
 #include<iostream>
 using namespace std;
-#define TIME_DELTA 1
 
-void init_logic(string m);
+void init_logic(string m, double t);
 void start_game();
 void turn_right();
 void turn_left();

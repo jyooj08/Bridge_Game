@@ -35,8 +35,13 @@ MouseLock mouse_lock;
 bool wire_mode = false;
 uint color_mode = 0;
 bool rotate_mode = false;
-extern Basic3dObject box2;
+extern Basic3dObject box;
 extern Basic3dObject lightBall;
+extern bool game_start;
+extern int stage;
+
+bool game_init();
+bool game_finalize();
 
 //************************************ 
 // simple functions
@@ -105,26 +110,6 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			}
 		}
-		/*else if (key == GLFW_KEY_UP) {
-			box2.translate(vec3(0, 0, -10));
-			lightBall.translate(vec3(0, 0, -10));
-			global_cam.basicMove(vec3(0, 0, -10));
-		}
-		else if (key == GLFW_KEY_DOWN) {
-			box2.translate(vec3(0, 0, 10));
-			lightBall.translate(vec3(0, 0, 10));
-			global_cam.basicMove(vec3(0, 0, 10));
-		}
-		else if (key == GLFW_KEY_RIGHT) {
-			box2.translate(vec3(10, 0, 0));
-			lightBall.translate(vec3(10, 0, 0));
-			global_cam.basicMove(vec3(10, 0, 0));
-		}
-		else if (key == GLFW_KEY_LEFT) {
-			box2.translate(vec3(-10, 0, 0));
-			lightBall.translate(vec3(-10, 0, 0));
-			global_cam.basicMove(vec3(-10, 0, 0));
-		}*/
 		else if (key == GLFW_KEY_RIGHT) {
 			turn_right();
 			global_cam.turn_right();
@@ -134,6 +119,12 @@ void keyboard( GLFWwindow* window, int key, int scancode, int action, int mods )
 			turn_left();
 			global_cam.turn_left();
 			lightBall.rotate(vec3(0, 1, 0), 90);
+		}
+		else if (key == GLFW_KEY_ENTER) {
+			if (!game_start && stage >= 0) {
+				game_start = true;
+				game_init();
+			}
 		}
 		else {
 			if (key == GLFW_KEY_W && cF == 0) 

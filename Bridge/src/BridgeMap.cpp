@@ -3,13 +3,19 @@
 
 
 
-BridgeMap::BridgeMap() {
+BridgeMap::BridgeMap(string map) {
 	// sample path // TODO : delete sample
-	Tile sample_path[] = "UURRRUUUURR";
-	for (auto t : sample_path) {
+	Tile* sample_path = (char*)map.c_str();
+	int i = 0;
+	while (true) {
+		if (sample_path[i] == '\0') break;
+		path.push_back(sample_path[i]);
+		i++;
+	}
+	/*for (auto t : sample_path) {
 		if (t == '\0') break;
 		path.push_back(t);
-	}
+	}*/
 
 	// 3D Object setting
 	tile.setMesh(generateBoxMesh(tile_size));
