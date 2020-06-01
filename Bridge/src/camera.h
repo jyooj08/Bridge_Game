@@ -6,7 +6,7 @@
 
 typedef struct camera
 {
-	vec3	eye = vec3( 100,0, 100 );
+	vec3	eye = vec3( 0, 100, 100 );
 	vec3	at = vec3( 0, 0, 0 );
 	vec3	up = vec3( 0, 1,0 );
 	mat4	view_matrix = mat4::look_at( eye, at, up );

@@ -5,7 +5,7 @@
 
 BridgeMap::BridgeMap() {
 	// sample path // TODO : delete sample
-	Tile sample_path[] = "UURRRJJURRRLRLRLRUUUUURRJRURRRURLRURLRULRULRURLRURLRLRUUURRRUDDDDDURURURLDURRRJJJJJJJJJDDDURLRURLRUDJDJDJDJDJDLJDDLDJLDJLDJRUURLURR";
+	Tile sample_path[] = "UURRRURRRLRLRLRUUUUURRRURRRURLRURLRULRULRURLRURLRLRUUURRRUDDDDDURURURLDURRRDD";
 	for (auto t : sample_path) {
 		if (t == '\0') break;
 		path.push_back(t);
@@ -15,7 +15,7 @@ BridgeMap::BridgeMap() {
 	tile.setMesh(generateBoxMesh(tile_size));
 	tile.getMesh()->paint(0, 1, 0);
 	//tile.getMesh()->gPaint(1,0,0);
-	tile.setOrigin(vec3(5,0.5f,5));
+	tile.setOrigin(vec3(0,0,0));
 }
 
 void BridgeMap::render() {
@@ -29,10 +29,10 @@ void BridgeMap::render() {
 		}
 		switch (path[i]) {
 		case 'U':
-			tile.translate(vec3(0,0,10.0f));
+			tile.translate(vec3(0,0,-10.0f));
 			break;
 		case 'D':
-			tile.translate(vec3(0,0,-10.0f));
+			tile.translate(vec3(0,0,10.0f));
 			break;
 		case 'L':
 			tile.translate(vec3(-10.0f,0,0));

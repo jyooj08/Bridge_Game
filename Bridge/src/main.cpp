@@ -124,7 +124,6 @@ bool user_init()
 	print_help();
 
 
-
 	// generate 3dObjects *********************
 	sphereMesh = generateSphereMesh();
 	bridgeMap = new BridgeMap();
@@ -196,7 +195,7 @@ bool user_init()
 	attachAnimator([](double t) {
 		lightBall.rotate(0, 2, 0, float(t));
 		light.position = vec4(lightBall.getPosition(),1);
-	});
+	},0, 0.1);
 	// box movement
 
 	attachAnimator([](double t) {
@@ -221,15 +220,16 @@ bool user_init()
 	*/
 
 	if (!init_sound()) return false;
-	play_sound();
+	//play_sound();
 
-	init_text();
+	if (!init_text()) return false;
 
 	return true;
 }
 
 void user_finalize()
 {
+	finalize_sound();
 }
 void depth_map_fbo_setting() {
 	// source : learnopengl.com
